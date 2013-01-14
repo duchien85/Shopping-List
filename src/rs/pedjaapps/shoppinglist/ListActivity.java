@@ -1,25 +1,21 @@
 package rs.pedjaapps.shoppinglist;
 
-import java.util.List;
+import android.annotation.*;
+import android.app.*;
+import android.content.*;
+import android.os.*;
+import android.support.v4.app.*;
+import android.view.*;
+import android.widget.*;
+import com.actionbarsherlock.app.*;
+import com.actionbarsherlock.view.*;
+import java.util.*;
+import rs.pedjaapps.shoppinglist.*;
 
-
+import android.support.v4.app.Fragment;
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.os.Bundle;
-import android.content.Context;
-import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 public class ListActivity extends SherlockFragmentActivity implements
 		ActionBar.OnNavigationListener {
@@ -40,12 +36,11 @@ public class ListActivity extends SherlockFragmentActivity implements
 
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getSupportActionBar();
-		actionBar.setDisplayShowTitleEnabled(false);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-
+	
 		db.open();
 		
 		lists = db.getAllListsNames();
+		setNavigationMode();
 		//String[] lists = {"sfds"};
 		adapter = new ArrayAdapter<String>(getActionBarThemedContextCompat(),
 				android.R.layout.simple_list_item_1,
@@ -56,6 +51,17 @@ public class ListActivity extends SherlockFragmentActivity implements
 				adapter, this);
 	}
 
+	public void setNavigationMode(){
+		if(lists.isEmpty()){
+			getSupportActionBar().setDisplayShowTitleEnabled(true);
+			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		}
+		else{
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		}
+	}
+	
 	/**
 	 * Backward-compatible version of {@link ActionBar#getThemedContext()} that
 	 * simply returns the {@link android.app.Activity} if
@@ -100,12 +106,24 @@ public class ListActivity extends SherlockFragmentActivity implements
 
 		if (item.getItemId() == R.id.menu_add)
 		{
-			long test = db.createList("test");
-			adapter.add(db.getListByName("test"));
+		addListDialog();
+			
+		}	
+		if (item.getItemId() == R.id.menu_edit)
+		{
+			
+			editListDialog(getSupportActionBar().getSelectedNavigationIndex());
+			
+
+		}	
+		
+			if (item.getItemId() == R.id.menu_delete)
+		{
+			db.removeList(getSupportActionBar().getSelectedNavigationIndex());
+			adapter.remove(adapter.getItem(getSupportActionBar().getSelectedNavigationIndex()));
 			adapter.notifyDataSetChanged();
 			
 		}	
-			
 		
 	return super.onOptionsItemSelected(item);
 
@@ -121,6 +139,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 		fragment.setArguments(args);
 		getSupportFragmentManager().beginTransaction()
 				.replace(R.id.container, fragment).commit();
+			
 		return true;
 	}
 
@@ -151,4 +170,110 @@ public class ListActivity extends SherlockFragmentActivity implements
 		}
 	}
 
+	private void editListDialog(final int position){
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    	final EditText input = new EditText(this);
+        	input.setGravity(Gravity.CENTER_HORIZONTAL);
+		    
+			
+				builder.setTitle("Rename List");
+				builder.setMessage("Enter new List Name");
+				builder.setIcon(R.drawable.ic_menu_edit);
+				input.setText(db.getList(position));
+			
+					
+					builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								
+	                            String inputText = input.getText().toString();
+					            
+							    if(inputText.length()==0){
+									Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+								}
+								else if(db.listExists(inputText)){
+									Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
+								}
+								else{
+									adapter.remove(db.getList(position));
+									db.setListName(position, inputText);
+								lists = db.getAllListsNames();
+									adapter.add(inputText);
+									adapter.notifyDataSetChanged();
+								}
+								
+							}
+						});
+						
+	        	builder.setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					
+
+				}
+			});
+					builder.setView(input);
+
+					AlertDialog alert = builder.create();
+
+					alert.show();
+	}
+	
+	private void addListDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
+		input.setGravity(Gravity.CENTER_HORIZONTAL);
+
+		
+			builder.setTitle("Add List");
+			builder.setMessage("Enter List Name");
+			builder.setIcon(R.drawable.ic_menu_add);
+	
+
+		builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+
+					String inputText = input.getText().toString();
+
+					if(inputText.length()==0){
+						Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+					}
+					else if(db.listExists(inputText)){
+						Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
+					}
+					
+					else{
+
+						if(db.createList(inputText)!=db.NOTIFY_TABLE_CREATION_PROBLEM){
+							lists = db.getAllListsNames();
+							adapter.add(inputText);
+							adapter.notifyDataSetChanged();
+							setNavigationMode();
+						}
+						else{
+							Toast.makeText(ListActivity.this, "Something went wrong.\nPlease try again", Toast.LENGTH_LONG).show();
+						}
+					}
+				}
+			});
+
+		builder.setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+
+
+				}
+			});
+		builder.setView(input);
+
+		AlertDialog alert = builder.create();
+
+		alert.show();
+	}
+	
 }

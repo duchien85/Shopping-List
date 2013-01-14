@@ -127,6 +127,13 @@ public class DatabaseHandler {
 		values.put(KEY_LIST_NAME, name);
 		mDb.update(LIST_TABLE_NAME, values, KEY_LIST_ROWID + "=" + id , null);
 	}
+	
+	public void setListNameByName(String name, String newName) {
+		ContentValues values = new ContentValues();
+		values.put(KEY_LIST_NAME, newName);
+		mDb.update(LIST_TABLE_NAME, values, KEY_LIST_NAME + "=" + name , null);
+	}
+	
 	/**
 	 * This method deletes row in the LIST_TABLE_NAME of the selected id
 	 * and deletes appropriate table from the DB  
@@ -168,31 +175,35 @@ public class DatabaseHandler {
 	 * @param id id of the list
 	 * @return list cursor
 	 */
-	public Cursor getList(long id) {
+/*	public Cursor getList(long id) {
 		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
 		Cursor c = mDb.query(true, LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=" + id, null, null, null, null, null);
 		if (c!=null) {
 			c.moveToFirst();
 		}
 		return c;
-	}
+	}*/
 	
-	public String getListByName(String name)
+	public String getList(long id)
 	{
-       String list;
+		String list;
 		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
+
+        Cursor c = mDb.query(LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=?",
+							 new String[] { String.valueOf(id) }, null, null, null, null);
+	//	Cursor c = mDb.query(true, LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=" + id, null, null, null, null, null);
 		
-        Cursor c = mDb.query(LIST_TABLE_NAME, columns, KEY_LIST_NAME + "=?",
-								 new String[] { name }, null, null, null, null);
         if (c != null)
             c.moveToFirst();
 
         list = c.getString(1);
-        
-     
+
+
         c.close();
         return list;
     }
+	
+
 	/**
 	 * Gets all lists from the LIST_TABLE_NAME sorted
 	 * by name. It is used to display existing lists sorted alphabetically 
