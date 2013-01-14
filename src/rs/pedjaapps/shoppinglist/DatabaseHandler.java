@@ -11,410 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DatabaseHandler {
-	
-	public static final String TAG="ShoppingList.db";
-	
-	// used to get id of the list in list table
-	private static final int ID_COLUMN_INDEX = 0;
-	
-	/* Constants for following created lists */
-	public static final String KEY_LIST_ROWID = "_id";
-	public static final String KEY_LIST_NAME = "name";
-	public static final String KEY_LIST_TABLE_NAME = "table_name";
-		
-	/* Constants needed for items in the list */
-	public static final String KEY_ITEM_NAME="name";
-	public static final String KEY_ITEM_QUANTITY="quantity";
-	public static final String KEY_ITEM_VALUE="value";
-	public static final String KEY_ITEM_TOTAL_ITEM_VALUE="totalvalue";
-	public static final String KEY_ITEM_ROWID="_id";
-	public static final String KEY_ITEM_DONE="done";
-	public static final String KEY_ITEM_IMAGE="image";
-	public static final String KEY_ITEM_CATEGORY="category";
-	public static final String KEY_ITEM_TABLE_NAME = "tablename";
-	public static final String DATABASE_NAME="ShoppingList.db";
-	public static final int DATABASE_VERSION=2;
-	
-	/* This constant is used to notify that there was problem creating table in DB */
-	public static final long NOTIFY_TABLE_CREATION_PROBLEM = -2;
-	
-	public static final String LIST_TABLE_NAME = "list_table_name";
-	
-	private static final String CREATE_LIST_TABLE ="create table " + LIST_TABLE_NAME + " (" + KEY_LIST_ROWID + " integer primary key autoincrement, "
-    + KEY_LIST_NAME + " text not null, " + KEY_LIST_TABLE_NAME + " text not null "  + ");";
-
-	public static final int LIST_NAME_COLUMN = 1;
-	public static final int TABLE_NAME_COLUMN = 2;
-	
-	private static class DatabaseHelper extends SQLiteOpenHelper {
-			
-			DatabaseHelper(Context context) {
-				super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			}
-	
-			@Override
-			public void onCreate(SQLiteDatabase db) {
-				db.execSQL(CREATE_LIST_TABLE);
-								
-			}
-	
-			@Override
-			public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-				Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
-	                    + newVersion + ", which will destroy all old data");
-				db.execSQL("DROP TABLE IF EXISTS "+DATABASE_NAME);
-				onCreate(db);
-			}
-			
-		}
-	/**
-	 * Constructor
-	 * @param context
-	 */
-	public DatabaseHandler (Context context) {
-		this.mContext = context;
-		
-	}
-	/**
-	 * This method opens data base
-	 * @return
-	 * @throws SQLException
-	 */
-	public DatabaseHandler open() throws SQLException {
-		mDbHelper = new DatabaseHelper(mContext);
-		mDb = mDbHelper.getWritableDatabase();
-		return this;
-	}
-	/**
-	 * This method closes database
-	 */
-	public void close() {
-		mDbHelper.close();
-	}
-	/**
-	 * Inserts name of the newly created list in the lists table and 
-	 * creates new table in data base using _id from the list table for
-	 * name of newly created table
-	 * 
-	 * @param name name of the list
-	 * @return row id of the newly inserted row or -1 if it cannot be created
-	 */
-	public long createList (String name) {
-		long newPosition = 1;
-		Cursor c = getAllLists();
-		if (c.getCount()>0) {
-			c.moveToLast();
-			newPosition = c.getLong(ID_COLUMN_INDEX) + 1;
-		}
-		ContentValues initialValues = new ContentValues();
-		initialValues.put(KEY_LIST_NAME, name);
-		name = "ListId_" + newPosition; 		
-		initialValues.put(KEY_LIST_TABLE_NAME, name);
-		
-		/* this creates table in the DB for list */
-		try {
-			mDb.execSQL(createSQLStatementAdd(name));
-			return mDb.insert(LIST_TABLE_NAME, null, initialValues);
-		} catch (SQLException e) {
-			return NOTIFY_TABLE_CREATION_PROBLEM;
-		}
-		
-	}
-	
-	public void setListName(long id, String name) {
-		ContentValues values = new ContentValues();
-		values.put(KEY_LIST_NAME, name);
-		mDb.update(LIST_TABLE_NAME, values, KEY_LIST_ROWID + "=" + id , null);
-	}
-	
-	public void setListNameByName(String name, String newName) {
-		ContentValues values = new ContentValues();
-		values.put(KEY_LIST_NAME, newName);
-		mDb.update(LIST_TABLE_NAME, values, KEY_LIST_NAME + "=" + name , null);
-	}
-	
-	/**
-	 * This method deletes row in the LIST_TABLE_NAME of the selected id
-	 * and deletes appropriate table from the DB  
-	 * @param id row id of the selected list in the LIST_TABLE_NAMES
-	 * @return id of the deleted row
-	 */
-	public long removeList (long id) {
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(true, LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=" + id, null, null, null, null, null);
-		if (c!=null) {
-			c.moveToFirst();
-		}
-		String tableName = c.getString(TABLE_NAME_COLUMN);
-		mDb.execSQL(createSQLStatementRemove(tableName));
-		return mDb.delete(LIST_TABLE_NAME, KEY_LIST_ROWID + "=" + id, null);
-		
-	}
-	/**
-	 * This method removes all lists from database
-	 * It removes entries from list table and drops all other tables
-	 * 
-	 * @return number of affected tables
-	 */
-	public int removeAllLists () {
-		int counter = 0;
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(LIST_TABLE_NAME, columns, null, null, null, null, null);
-		c.moveToFirst();
-		for (c.move(-1); c.moveToNext(); c.isAfterLast()) {
-			String tableName = c.getString(TABLE_NAME_COLUMN);
-			mDb.execSQL(createSQLStatementRemove(tableName));
-			counter++;
-		}
-		if (counter>0) mDb.delete(LIST_TABLE_NAME, null, null);
-		return counter;
-	}
-	/**
-	 * Gets list
-	 * @param id id of the list
-	 * @return list cursor
-	 */
-/*	public Cursor getList(long id) {
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(true, LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=" + id, null, null, null, null, null);
-		if (c!=null) {
-			c.moveToFirst();
-		}
-		return c;
-	}*/
-	
-	public String getList(long id)
-	{
-		String list;
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-
-        Cursor c = mDb.query(LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=?",
-							 new String[] { String.valueOf(id) }, null, null, null, null);
-	//	Cursor c = mDb.query(true, LIST_TABLE_NAME, columns, KEY_LIST_ROWID + "=" + id, null, null, null, null, null);
-		
-        if (c != null)
-            c.moveToFirst();
-
-        list = c.getString(1);
-
-
-        c.close();
-        return list;
-    }
-	
-
-	/**
-	 * Gets all lists from the LIST_TABLE_NAME sorted
-	 * by name. It is used to display existing lists sorted alphabetically 
-	 * in EZCart activity
-	 * @return cursor with all lists
-	 */
-	public Cursor getAllListsSorted() {
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(LIST_TABLE_NAME, columns, null, null, null, null, KEY_LIST_NAME, null);
-		if (c!=null) {
-			c.moveToFirst();
-		}
-		return c;
-	}
-	
-	/**
-	 * Gets all lists from the LIST_TABLE_NAME
-	 * It is used to determine id of the last list in create
-	 * list method.
-	 * @return cursor with all lists
-	 */
-	public Cursor getAllLists() {
-		String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(LIST_TABLE_NAME, columns, null, null, null, null, null, null);
-		if (c!=null) {
-			c.moveToFirst();
-		}
-		return c;
-	}
-	
-	public List<String> getAllListsNames()
-	{
-        List<String> nameList = new ArrayList<String>();
-        String[] columns = new String[] {KEY_LIST_ROWID, KEY_LIST_NAME, KEY_LIST_TABLE_NAME};
-		Cursor c = mDb.query(LIST_TABLE_NAME, columns, null, null, null, null, null, null);
-		
-        if (c.moveToFirst())
-		{
-            do {
-				
-                // Adding  to list
-                nameList.add(c.getString(1));
-            } while (c.moveToNext());
-        }
-
-        
-        return nameList;
-    }
-	
-	/**
-	 * Creates SQL statement for creating table to be used with
-	 * execSQL.
-	 * This is used for creating multiple lists, this creates table
-	 * in existing database that is used store items in list;
-	 * 
-	 * @param tableNaDatabaseme name of the table to be created in Database
-	 * @return
-	 */
-	private String createSQLStatementAdd (String tableName) {
-		return "create table "+tableName+" (_id integer primary key autoincrement, "
-        + DatabaseHandler.KEY_ITEM_NAME + " text not null, "
-		+ DatabaseHandler.KEY_ITEM_VALUE + " double not null, " 
-        + DatabaseHandler.KEY_ITEM_QUANTITY + " double not null, " 
-		+ DatabaseHandler.KEY_ITEM_TOTAL_ITEM_VALUE + " double not null, " 
-		+ DatabaseHandler.KEY_ITEM_IMAGE + " text not null, " 
-		+ DatabaseHandler.KEY_ITEM_CATEGORY + " text not null, " 
-        + DatabaseHandler.KEY_ITEM_DONE +" boolean not null );";
-	}
-	/**	
-	 * Creates SQL statement for creating table to be used with execSQL.
-	 * This is used for creating multiple lists, this deletes table
-	 * in existing database that is used store items in list;
-	 * @param tableName
-	 * @return
-	 */
-	private String createSQLStatementRemove (String tableName) {
-		return "drop table "+tableName;
-	}
-	
-	/**
-	 * This method inserts item in the list 
-	 * @param table name of the list
-	 * @param name nDatabaseame of the item
-	 * @param value price of the item
-	 * @param quantity number of items
-	 * @param totalItemValue total value of the item (value*quantity)
-	 * @param done true if item is bought, false if item is to be bought
-	 * @return row id of the newly inserted row
-	 */
-	public long addItem (String table, String name, double value, double quantity, double totalItemValue, boolean done, String image, String category) {
-		ContentValues initialValues = new ContentValues();
-		initialValues.put(KEY_ITEM_NAME, name);
-		initialValues.put(KEY_ITEM_VALUE, value);
-		initialValues.put(KEY_ITEM_QUANTITY, quantity);
-		initialValues.put(KEY_ITEM_TOTAL_ITEM_VALUE, totalItemValue);
-		initialValues.put(KEY_ITEM_IMAGE, image);
-		initialValues.put(KEY_ITEM_CATEGORY, category);
-		initialValues.put(KEY_ITEM_DONE, done);
-		
-		
-		return mDb.insert(table, null, initialValues);
-	}
-	/**
-	 * This gets item from the list
-	 * @param listName name of the list
-	 * @param id row id of the item
-	 * @return cursor with all values of single item (name, price, quantity, total price, done)
-	 */
-	public Cursor getItem(String listName, long id) {
-		String[] columns = new String[] {KEY_ITEM_ROWID, KEY_ITEM_NAME, KEY_ITEM_VALUE, KEY_ITEM_QUANTITY, KEY_ITEM_TOTAL_ITEM_VALUE, KEY_ITEM_IMAGE, KEY_ITEM_CATEGORY, KEY_ITEM_DONE};
-		Cursor c = mDb.query(true, listName, columns, KEY_ITEM_ROWID + "=" + id, null, null, null, null, null);
-		if (c!=null) {
-			c.moveToFirst();
-		}
-		return c;
-	}
-	
-	/**
-	 * This gets all items from the list
-	 * @param listName name of the list
-	 * @return cursor holding values of all items in the list (name, price, quantity, total price, done)
-	 */
-	public Cursor getAllItems(String listName) {
-		String[] columns = new String[] {KEY_ITEM_ROWID, KEY_ITEM_NAME, KEY_ITEM_VALUE, KEY_ITEM_QUANTITY, KEY_ITEM_TOTAL_ITEM_VALUE, KEY_ITEM_IMAGE, KEY_ITEM_CATEGORY, KEY_ITEM_DONE};
-		return mDb.query(listName, columns, null, null, null, null, KEY_ITEM_NAME );
-	}
-	
-	/**
-	 * This updates item in a list
-	 * @param listName name of the list
-	 * @param id id of the item that is edited
-	 * @param name name of the item
-	 * @param value price of the item
-	 * @param quantity number of items
-	 * @param totalItemValue total price of added item
-	 * @param done boolean true if bought, false if it is to be bought
-	 * @return boolean true succeeded, false if not 
-	 */
-	public boolean updateItem(String listName, long id, String name, double value, double quantity, double totalItemValue, boolean done, String category, String image) {
-		ContentValues args= new ContentValues();
-		args.put(KEY_ITEM_NAME, name);
-		args.put(KEY_ITEM_VALUE, value);
-		args.put(KEY_ITEM_QUANTITY, quantity);
-		args.put(KEY_ITEM_TOTAL_ITEM_VALUE, totalItemValue);
-		args.put(KEY_ITEM_DONE, done);
-		args.put(KEY_ITEM_IMAGE, image);
-		args.put(KEY_ITEM_CATEGORY, category);
-		
-		return mDb.update(listName, args, KEY_ITEM_ROWID+"="+id, null)>0;
-	}
-	
-	public boolean updateDone(String listName, long id, boolean done) {
-		ContentValues args= new ContentValues();
-		args.put(KEY_ITEM_DONE, done);
-		return mDb.update(listName, args, KEY_ITEM_ROWID+"="+id, null)>0;
-	}
-	
-	/**
-	 * This removes item from the list 
-	 * @param listName name of the list
-	 * @param id id of the item in the list
-	 * @return boolean true succeeded, false if not
-	 */
-	public boolean removeItem(String listName, long id) {
-		return mDb.delete(listName, KEY_ITEM_ROWID + "=" + id, null) > 0;
-	}
-	/**
-	 * Removes all items from the list
-	 * @param listName name of the list 
-	 * @return boolean true succeeded, false if not
-	 */
-	public boolean clearList(String listName) {
-		return mDb.delete(listName, null, null) > 0;
-	}
-	
-	
-	
-	/**
-	 * This method checks if list with a given name already exists
-	 * in the database.
-	 * First it creates array list and then it checks for the index 
-	 * of the given name.
-	 *  
-	 * @param listName Name of the list we are checking if it already exists
-	 * @return boolean true if exists, false otherwise
-	 */
-	public boolean listExists(String listName) {
-		Cursor c = getAllListsSorted();
-		c.moveToFirst();
-		ArrayList<String> listOfNames = new ArrayList<String>();
-		for (c.move(-1); c.moveToNext(); c.isAfterLast()) {
-			String name = c.getString(LIST_NAME_COLUMN);
-			listOfNames.add(name);
-		}
-		return listOfNames.indexOf(listName) > 0;
-	}
-	
-	
-	private final Context mContext;
-	private DatabaseHelper mDbHelper;
-	private SQLiteDatabase mDb;
-}
-
-/*import java.util.ArrayList;
-import java.util.List;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHandler extends SQLiteOpenHelper
 {
@@ -424,19 +20,17 @@ public class DatabaseHandler extends SQLiteOpenHelper
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "KTDatabase.db";
+    private static final String DATABASE_NAME = "ShoppingList.db";
 
     // table names
-    private static final String TABLE_PROFILES = "profiles";
+    private static final String TABLE_LISTS = "lists_table";
     // Table Columns names
-    private static final String KEY_PROFILE_ID = "id";
-    private static final String KEY_PROFILE_NAME = "Name";
-    private static final String KEY_PROFILE_CPU0MIN = "cpu0min";
-    private static final String KEY_PROFILE_CPU0MAX = "cpu0max";
-    private static final String KEY_PROFILE_CPU1MAX = "cpu1max";
-    private static final String KEY_PROFILE_CPU1MIN = "cpu1min";
-
-    private static final String KEY_PROFILE_CPU2MIN = "cpu2min";
+    private static final String KEY_LISTS_ID = "id";
+    private static final String KEY_LISTS_NAME = "name";
+    private static final String KEY_LISTS_TABLE_NAME = "table_name";
+    private static final String KEY_LISTS_COLOR = "color";
+    
+    /*static final String KEY_PROFILE_CPU2MIN = "cpu2min";
     private static final String KEY_PROFILE_CPU2MAX = "cpu2max";
     private static final String KEY_PROFILE_CPU3MAX = "cpu3max";
     private static final String KEY_PROFILE_CPU3MIN = "cpu3min";
@@ -456,7 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String KEY_PROFILE_IOSCHEDULER = "IOScheduler";
 	private static final String KEY_PROFILE_SDCACHE = "sdCache";
 	private static final String KEY_PROFILE_SWEEP2WAKE = "sweep2wake";
-  
+  */
 	
     
 
@@ -469,38 +63,16 @@ public class DatabaseHandler extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
 	{
-        String CREATE_PROFILES_TABLE = "CREATE TABLE " + TABLE_PROFILES + "("
-			+ KEY_PROFILE_ID + " INTEGER PRIMARY KEY,"
-			+ KEY_PROFILE_NAME + " TEXT,"
-			+ KEY_PROFILE_CPU0MIN + " TEXT,"
-			+ KEY_PROFILE_CPU0MAX + " TEXT," 
-			+ KEY_PROFILE_CPU1MIN + " TEXT,"
-			+ KEY_PROFILE_CPU1MAX + " TEXT,"
-			+ KEY_PROFILE_CPU2MIN + " TEXT,"
-			+ KEY_PROFILE_CPU2MAX + " TEXT," 
-			+ KEY_PROFILE_CPU3MAX + " TEXT,"
-			+ KEY_PROFILE_CPU3MIN + " TEXT,"
-			+ KEY_PROFILE_CPU0GOV + " TEXT,"
-			+ KEY_PROFILE_CPU1GOV + " TEXT,"
-			+ KEY_PROFILE_CPU2GOV + " TEXT,"
-			+ KEY_PROFILE_CPU3GOV + " TEXT,"
-			+ KEY_PROFILE_VOLTAGE + " TEXT,"
-			+ KEY_PROFILE_MTD + " TEXT,"
-			+ KEY_PROFILE_MTU + " TEXT,"
-			+ KEY_PROFILE_GPU2D + " TEXT,"
-			+ KEY_PROFILE_GPU3D + " TEXT,"
-			+ KEY_PROFILE_BUTTONS_BACKLIGHT + " TEXT,"
-			+ KEY_PROFILE_VSYNC + " INTEGER,"
-			+ KEY_PROFILE_F_CHARGE + " INTEGER,"
-			+ KEY_PROFILE_CDEPTH + " TEXT,"
-			+ KEY_PROFILE_IOSCHEDULER + " TEXT,"
-			+ KEY_PROFILE_SDCACHE + " INTEGER,"
-			+ KEY_PROFILE_SWEEP2WAKE + " INTEGER"
+        String CREATE_LISTS_TABLE = "CREATE TABLE " + TABLE_LISTS + "("
+			+ KEY_LISTS_ID + " INTEGER PRIMARY KEY,"
+			+ KEY_LISTS_NAME + " TEXT,"
+			+ KEY_LISTS_TABLE_NAME + " TEXT,"
+			+ KEY_LISTS_COLOR + " INTEGER," 
 			
 			+
 			")";
         
-        db.execSQL(CREATE_PROFILES_TABLE);
+        db.execSQL(CREATE_LISTS_TABLE);
     }
 
     
@@ -509,7 +81,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 	{
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROFILES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LISTS);
 
         // Create tables again
         onCreate(db);
@@ -517,43 +89,21 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
     /**
      * All CRUD(Create, Read, Update, Delete) Operations
-     
+     */
 
   
-    void addProfile(Profile profile)
+    void addList(ListsDatabaseEntry list)
 	{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_PROFILE_NAME, profile.getName());
-        values.put(KEY_PROFILE_CPU0MIN, profile.getCpu0min()); 
-        values.put(KEY_PROFILE_CPU0MAX, profile.getCpu0max()); 
-        values.put(KEY_PROFILE_CPU1MIN, profile.getCpu1min());
-        values.put(KEY_PROFILE_CPU1MAX, profile.getCpu1max());
-        values.put(KEY_PROFILE_CPU2MIN, profile.getCpu2min()); 
-        values.put(KEY_PROFILE_CPU2MAX, profile.getCpu2max()); 
-        values.put(KEY_PROFILE_CPU3MAX, profile.getCpu3max());
-        values.put(KEY_PROFILE_CPU3MIN, profile.getCpu3min());
-        values.put(KEY_PROFILE_CPU0GOV, profile.getCpu0gov());
-        values.put(KEY_PROFILE_CPU1GOV, profile.getCpu1gov());
-        values.put(KEY_PROFILE_CPU2GOV, profile.getCpu2gov());
-        values.put(KEY_PROFILE_CPU3GOV, profile.getCpu3gov());
-		values.put(KEY_PROFILE_VOLTAGE,profile.getVoltage());
-        values.put(KEY_PROFILE_MTD, profile.getMtd());
-        values.put(KEY_PROFILE_MTU, profile.getMtu());
-        values.put(KEY_PROFILE_GPU2D, profile.getGpu2d());
-        values.put(KEY_PROFILE_GPU3D, profile.getGpu3d());
-		values.put(KEY_PROFILE_BUTTONS_BACKLIGHT, profile.getButtonsLight());
-        values.put(KEY_PROFILE_VSYNC, profile.getVsync());
-        values.put(KEY_PROFILE_F_CHARGE, profile.getFcharge());
-        values.put(KEY_PROFILE_CDEPTH, profile.getCdepth());
-        values.put(KEY_PROFILE_IOSCHEDULER, profile.getIoScheduler());
-        values.put(KEY_PROFILE_SDCACHE, profile.getSdcache());
-        values.put(KEY_PROFILE_SWEEP2WAKE, profile.getSweep2wake());
+        values.put(KEY_LISTS_NAME, list.getName());
+        values.put(KEY_LISTS_TABLE_NAME, list.getTableName()); 
+        values.put(KEY_LISTS_COLOR, list.getColor()); 
        
 
         // Inserting Row
-        db.insert(TABLE_PROFILES, null, values);
+        db.insert(TABLE_LISTS, null, values);
         db.close(); // Closing database connection
     }
 
@@ -824,4 +374,4 @@ public class DatabaseHandler extends SQLiteOpenHelper
     
     
 }
-*/
+

@@ -16,5 +16,5 @@
         android:id="@+id/menu_delete"
         android:showAsAction="ifRoom|withText"
         android:title="Delete"
-        android:icon="@drawable/ic_menu_edit"/>
+        android:icon="@drawable/ic_menu_delete"/>
 </menu>

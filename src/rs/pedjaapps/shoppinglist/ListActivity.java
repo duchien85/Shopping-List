@@ -13,6 +13,8 @@ import java.util.*;
 import rs.pedjaapps.shoppinglist.*;
 
 import android.support.v4.app.Fragment;
+import android.text.InputType;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -112,14 +114,14 @@ public class ListActivity extends SherlockFragmentActivity implements
 		if (item.getItemId() == R.id.menu_edit)
 		{
 			
-			editListDialog(getSupportActionBar().getSelectedNavigationIndex());
+			editListDialog(getSupportActionBar().getSelectedNavigationIndex()+1);
 			
 
 		}	
 		
 			if (item.getItemId() == R.id.menu_delete)
 		{
-			db.removeList(getSupportActionBar().getSelectedNavigationIndex());
+			db.removeList(getSupportActionBar().getSelectedNavigationIndex()+1);
 			adapter.remove(adapter.getItem(getSupportActionBar().getSelectedNavigationIndex()));
 			adapter.notifyDataSetChanged();
 			
@@ -174,8 +176,10 @@ public class ListActivity extends SherlockFragmentActivity implements
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    	final EditText input = new EditText(this);
         	input.setGravity(Gravity.CENTER_HORIZONTAL);
-		    
-			
+        	input.setSingleLine(true);
+    		input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+    		input.setSelectAllOnFocus(true);
+    		
 				builder.setTitle("Rename List");
 				builder.setMessage("Enter new List Name");
 				builder.setIcon(R.drawable.ic_menu_edit);
@@ -199,8 +203,9 @@ public class ListActivity extends SherlockFragmentActivity implements
 									adapter.remove(db.getList(position));
 									db.setListName(position, inputText);
 								lists = db.getAllListsNames();
-									adapter.add(inputText);
+									adapter.insert(inputText, position-1);
 									adapter.notifyDataSetChanged();
+									
 								}
 								
 							}
@@ -248,7 +253,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 					
 					else{
 
-						if(db.createList(inputText)!=db.NOTIFY_TABLE_CREATION_PROBLEM){
+						/*if(db.createList(inputText)!=db.NOTIFY_TABLE_CREATION_PROBLEM){
 							lists = db.getAllListsNames();
 							adapter.add(inputText);
 							adapter.notifyDataSetChanged();
@@ -256,7 +261,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 						}
 						else{
 							Toast.makeText(ListActivity.this, "Something went wrong.\nPlease try again", Toast.LENGTH_LONG).show();
-						}
+						}*/
 					}
 				}
 			});
