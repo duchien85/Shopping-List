@@ -6,7 +6,6 @@ public class ListsDatabaseEntry
 	//private variables
     int _id;
     String _name;
-    String _table_name;
     int _color;
     
    
@@ -19,32 +18,23 @@ public class ListsDatabaseEntry
 
     }
     // constructor
-    public ListsDatabaseEntry(int id, String name, 
-    				
-    				String table_name, 
-    				int color
+    public ListsDatabaseEntry(int id, String name, int color
     				
 				 )
 	{
         this._id = id;
         this._name = name;
-        
-        this._table_name = table_name;
         this._color = color;
        
     }
 
     // constructor
     public ListsDatabaseEntry(String name, 
-    		
-			String table_name, 
 			int color
 				 )
 	{
 
     	this._name = name;
-    	
-        this._table_name = table_name;
         this._color = color;
       
     }
@@ -70,17 +60,6 @@ public class ListsDatabaseEntry
     public void setName(String name)
 	{
         this._name = name;
-    }
-
-    
-    public String getTableName()
-	{
-        return this._table_name;
-    }
-
-    public void setTableName(String table_name)
-	{
-        this._table_name = table_name;
     }
 
     public int getColor()

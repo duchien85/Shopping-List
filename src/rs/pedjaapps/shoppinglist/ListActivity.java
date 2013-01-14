@@ -39,9 +39,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getSupportActionBar();
 	
-		db.open();
 		
-		lists = db.getAllListsNames();
 		setNavigationMode();
 		//String[] lists = {"sfds"};
 		adapter = new ArrayAdapter<String>(getActionBarThemedContextCompat(),
@@ -121,7 +119,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 		
 			if (item.getItemId() == R.id.menu_delete)
 		{
-			db.removeList(getSupportActionBar().getSelectedNavigationIndex()+1);
+			//db.removeList(getSupportActionBar().getSelectedNavigationIndex()+1);
 			adapter.remove(adapter.getItem(getSupportActionBar().getSelectedNavigationIndex()));
 			adapter.notifyDataSetChanged();
 			
@@ -183,7 +181,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 				builder.setTitle("Rename List");
 				builder.setMessage("Enter new List Name");
 				builder.setIcon(R.drawable.ic_menu_edit);
-				input.setText(db.getList(position));
+				//input.setText(db.getList(position));
 			
 					
 					builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -196,7 +194,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 							    if(inputText.length()==0){
 									Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
 								}
-								else if(db.listExists(inputText)){
+								/*else if(db.listExists(inputText)){
 									Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
 								}
 								else{
@@ -206,7 +204,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 									adapter.insert(inputText, position-1);
 									adapter.notifyDataSetChanged();
 									
-								}
+								}*/
 								
 							}
 						});
@@ -247,9 +245,9 @@ public class ListActivity extends SherlockFragmentActivity implements
 					if(inputText.length()==0){
 						Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
 					}
-					else if(db.listExists(inputText)){
+					/**else if(db.listExists(inputText)){
 						Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
-					}
+					}*/
 					
 					else{
 

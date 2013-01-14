@@ -51,8 +51,7 @@ public class Lists extends SherlockActivity {
 
 		setContentView(R.layout.lists);
 		db = new DatabaseHandler(this);
-		db.open();
-		db.createList("inputText", Color.RED);
+		//db.addItem(new ItemsDatabaseEntry("test", 5, 56, 45, null, "$", "25.05.1991", false), "test");
 		try {
 	        File sd = Environment.getExternalStorageDirectory();
 	        File data = Environment.getDataDirectory();
@@ -86,14 +85,14 @@ public class Lists extends SherlockActivity {
 			adView.loadAd(new AdRequest());
 		}
 
-		/*listsListView = (ListView) findViewById(R.id.list);
+		listsListView = (ListView) findViewById(R.id.list);
 		listsAdapter = new ListsAdapter(this, R.layout.lists_row);
 
 		listsListView.setAdapter(listsAdapter);
 
 		for (final ListsEntry entry : getListsEntries()) {
 			listsAdapter.add(entry);
-		}*/
+		}
 
 	}
 
@@ -101,6 +100,7 @@ public class Lists extends SherlockActivity {
 
 		final List<ListsEntry> entries = new ArrayList<ListsEntry>();
 
+		
 		entries.add(new ListsEntry("test", "25.05.2005", 0xff6500ff));
 
 		/*
@@ -267,24 +267,18 @@ private void addListDialog(){
 
 				String inputText = input.getText().toString();
 
-				/*if(inputText.length()==0){
+				if(inputText.length()==0){
 					Toast.makeText(Lists.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
 				}
 				else if(db.listExists(inputText)){
 					Toast.makeText(Lists.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
 				}
 				
-				else{*/
-
-					if(db.createList(inputText, newColor)!=db.NOTIFY_TABLE_CREATION_PROBLEM){
-						//lists = db.getAllListsNames();
-						listsAdapter.add(new ListsEntry(inputText, "24.12.2043", newColor));
-						listsAdapter.notifyDataSetChanged();
-					}
-					/*else{
-						Toast.makeText(Lists.this, "Something went wrong.\nPlease try again", Toast.LENGTH_LONG).show();
-					}*/
-				//}
+				else{
+					db.addList(new ListsDatabaseEntry(inputText, newColor));
+					
+					
+				}
 			}
 		});
 
