@@ -13,6 +13,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 
@@ -23,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -53,19 +55,18 @@ public class Lists extends SherlockActivity {
 	TextView tv1;
 	LinearLayout ll;
 	ActionMode aMode;
-	FanView fan;
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.fan);
-		fan = (FanView) findViewById(R.id.fan_view);
-        fan.setViews(R.layout.lists, R.layout.lists_row);
+		setContentView(R.layout.lists);
+		
 		tv1 = (TextView)findViewById(R.id.tv1);
 		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
-		fan.showMenu();
+		
 		/*
 		 * This method backups database to sdcard for debuging purposes
 		 * Remove it in final release
@@ -112,6 +113,16 @@ public class Lists extends SherlockActivity {
 			setUI();
 		}
 
+		listsListView.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				Intent intent = new Intent(Lists.this, ListActivity.class);
+				startActivity(intent);
+			}
+			
+		});
 		listsListView.setOnItemLongClickListener(new OnItemLongClickListener(){
 
 			@Override
@@ -130,6 +141,8 @@ public class Lists extends SherlockActivity {
 		
 	}
 
+	
+	
 	private  void setUI(){
 		if(listsAdapter.isEmpty()==false){
 			tv1.setVisibility(View.GONE);

@@ -33,10 +33,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
     private static final String KEY_ITEM_NAME="name";
 	private static final String KEY_ITEM_QUANTITY="quantity";
 	private static final String KEY_ITEM_VALUE="value";
-	private static final String KEY_ITEM_TOTAL_VALUE="totalvalue";
 	private static final String KEY_ITEM_IMAGE="image";
 	private static final String KEY_ITEM_UNIT="unit";
-	private static final String KEY_ITEM_DATE="date";
+	private static final String KEY_ITEM_CURENCY="curency";
 	private static final String KEY_ITEM_DONE="done";
 	
 
@@ -83,10 +82,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
     			+ KEY_ITEM_NAME + " TEXT,"
     			+ KEY_ITEM_QUANTITY + " INTEGER,"
     			+ KEY_ITEM_VALUE + " INTEGER," 
-    			+ KEY_ITEM_TOTAL_VALUE + " INTEGER,"
     			+ KEY_ITEM_IMAGE + " TEXT," 
     			+ KEY_ITEM_UNIT + " TEXT,"
-    			+ KEY_ITEM_DATE + " TEXT," 
+    			+ KEY_ITEM_CURENCY + " TEXT," 
     			+ KEY_ITEM_DONE + " BOOLEAN DEFAULT 'FALSE'" 
     			+
     			")";
@@ -269,10 +267,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
         values.put(KEY_ITEM_NAME, item.getName());
         values.put(KEY_ITEM_QUANTITY, item.getQuantity());  
         values.put(KEY_ITEM_VALUE, item.getValue());
-        values.put(KEY_ITEM_TOTAL_VALUE, item.getTotalValue()); 
         values.put(KEY_ITEM_IMAGE, item.getImage());
         values.put(KEY_ITEM_UNIT, item.getUnit()); 
-        values.put(KEY_ITEM_DATE, item.getDate());
+        values.put(KEY_ITEM_CURENCY, item.getCurency());
         values.put(KEY_ITEM_DONE, item.getDone()); 
 
         // Inserting Row
@@ -288,10 +285,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
 									 KEY_ITEM_NAME,
 									 KEY_ITEM_QUANTITY,
 									 KEY_ITEM_VALUE,
-									 KEY_ITEM_TOTAL_VALUE,
 									 KEY_ITEM_IMAGE,
 									 KEY_ITEM_UNIT,
-									 KEY_ITEM_DATE,
+									 KEY_ITEM_CURENCY,
 									 KEY_ITEM_DONE
 									 
 									 
@@ -304,11 +300,10 @@ public class DatabaseHandler extends SQLiteOpenHelper
 									  cursor.getString(1),
 									  Integer.parseInt(cursor.getString(2)),
 									  cursor.getInt(3),
-									  cursor.getInt(4), 
+									  cursor.getString(4), 
 									  cursor.getString(5), 
 									  cursor.getString(6), 
-									  cursor.getString(7), 
-									  intToBool(cursor.getInt(8)) 
+									  intToBool(cursor.getInt(7)) 
 									  );
         // return list
         db.close();

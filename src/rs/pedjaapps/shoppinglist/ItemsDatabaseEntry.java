@@ -8,10 +8,9 @@ public class ItemsDatabaseEntry
     String _name;
     int _quantity;
     int _value;
-    int _totalValue;
     String _image;
     String _unit;
-    String _date;
+    String _curency;
     boolean _done;
 
     // Empty constructor
@@ -22,10 +21,9 @@ public class ItemsDatabaseEntry
     // constructor
     public ItemsDatabaseEntry(int id, String name, 
     				int quantity, int value,
-    				int totalValue,
     				String image, 
     				String unit,
-    				String date,
+    				String curency,
     				boolean done
 				 )
 	{
@@ -33,10 +31,9 @@ public class ItemsDatabaseEntry
         this._name = name;
         this._quantity = quantity;
         this._value = value;
-        this._totalValue = totalValue;
         this._image = image;
         this._unit = unit;
-        this._date = date;
+        this._curency = curency;
         this._done = done;
        
     }
@@ -47,7 +44,7 @@ public class ItemsDatabaseEntry
 			int totalValue,
 			String image, 
 			String unit,
-			String date,
+			String curency,
 			boolean done
 				 )
 	{
@@ -55,10 +52,9 @@ public class ItemsDatabaseEntry
         this._name = name;
         this._quantity = quantity;
         this._value = value;
-        this._totalValue = totalValue;
         this._image = image;
         this._unit = unit;
-        this._date = date;
+        this._curency = curency;
         this._done = done;
       
     }
@@ -107,15 +103,6 @@ public class ItemsDatabaseEntry
         this._value = value;
     }
     
-    public int getTotalValue()
-	{
-        return this._totalValue;
-    }
-
-    public void setTotalValue(int totalValue)
-	{
-        this._totalValue = totalValue;
-    }
     
     public String getImage()
 	{
@@ -139,15 +126,15 @@ public class ItemsDatabaseEntry
         this._unit = unit;
     }
 
-    public String getDate()
+    public String getCurency()
 	{
-        return this._date;
+        return this._curency;
     }
 
     
-    public void setDate(String date)
+    public void setCurency(String curency)
 	{
-        this._date = date;
+        this._curency = curency;
     }
     
     public boolean getDone()

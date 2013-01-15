@@ -1,97 +1,84 @@
 package rs.pedjaapps.shoppinglist;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.annotation.*;
 import android.app.*;
 import android.content.*;
 import android.os.*;
-import android.support.v4.app.*;
 import android.view.*;
 import android.widget.*;
-import com.actionbarsherlock.app.*;
-import com.actionbarsherlock.view.*;
-import java.util.*;
-import rs.pedjaapps.shoppinglist.*;
 
-import android.support.v4.app.Fragment;
+import com.actionbarsherlock.app.*;
 import android.text.InputType;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.deaux.fan.FanView;
 
-public class ListActivity extends SherlockFragmentActivity implements
-		ActionBar.OnNavigationListener {
+public class ListActivity extends SherlockActivity {
 
-	/**
-	 * The serialization (saved instance state) Bundle key representing the
-	 * current dropdown position.
-	 */
-	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	
+	private DatabaseHandler db;
+	FanView fan;
+	ActionBar actionBar;
+	private ListsAdapter sideAdapter;
+	private ListView sideListView;
 
-	private DatabaseHandler db = new DatabaseHandler(this);
-	List<String> lists;
-	ArrayAdapter<String> adapter;
+	private ListsAdapter itemsAdapter;
+	private ListView itemsListView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_list);
-
-		// Set up the action bar to show a dropdown list.
-		final ActionBar actionBar = getSupportActionBar();
-	
+		setContentView(R.layout.fan);
 		
-		setNavigationMode();
-		//String[] lists = {"sfds"};
-		adapter = new ArrayAdapter<String>(getActionBarThemedContextCompat(),
-				android.R.layout.simple_list_item_1,
-				android.R.id.text1,  lists);
-		// Set up the dropdown list navigation in the action bar.
-		actionBar.setListNavigationCallbacks(
-		// Specify a SpinnerAdapter to populate the dropdown list.
-				adapter, this);
+		db = new DatabaseHandler(this);
+		fan = (FanView) findViewById(R.id.fan_view);
+        fan.setViews(R.layout.activity_list, R.layout.side_list);
+		actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		
+		sideListView = (ListView) findViewById(R.id.list);
+		sideAdapter = new ListsAdapter(this, R.layout.side_lists_row);
+
+		sideListView.setAdapter(sideAdapter);
+
+		for (final ListsEntry entry : getSideListEntries()) {
+			sideAdapter.add(entry);
+			
+		}
+		
 	}
 
-	public void setNavigationMode(){
-		if(lists.isEmpty()){
-			getSupportActionBar().setDisplayShowTitleEnabled(true);
-			getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	private List<ListsEntry> getSideListEntries() {
+
+		final List<ListsEntry> entries = new ArrayList<ListsEntry>();
+		List<ListsDatabaseEntry> dbEntry = db.getAllLists();
+		for(ListsDatabaseEntry e: dbEntry){
+		entries.add(new ListsEntry(e.getName(), e.getColor(), ""));
 		}
-		else{
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		}
+		
+		return entries;
 	}
 	
-	/**
-	 * Backward-compatible version of {@link ActionBar#getThemedContext()} that
-	 * simply returns the {@link android.app.Activity} if
-	 * <code>getThemedContext</code> is unavailable.
-	 */
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-	private Context getActionBarThemedContextCompat() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-			return getActionBar().getThemedContext();
-		} else {
-			return this;
-		}
+	private void sideMenu(){
+		fan.showMenu();
 	}
-
-	@SuppressLint("NewApi")
+	
+	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
-		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM)) {
-			getSupportActionBar().setSelectedNavigationItem(
-					savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
-		}
+		
 	}
 
-	@SuppressLint("NewApi")
+	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		// Serialize the current dropdown position.
-		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getSupportActionBar()
-				.getSelectedNavigationIndex());
+		
 	}
 
 	@Override
@@ -124,51 +111,16 @@ public class ListActivity extends SherlockFragmentActivity implements
 			adapter.notifyDataSetChanged();
 			
 		}	*/
+		if(item.getItemId()==android.R.id.home || item.getItemId()==0){
+	        fan.showMenu();
+			return true;
+		}
 		
 	return super.onOptionsItemSelected(item);
 
 	}
 	
-	@Override
-	public boolean onNavigationItemSelected(int position, long id) {
-		// When the given dropdown item is selected, show its contents in the
-		// container view.
-		Fragment fragment = new DummySectionFragment();
-		Bundle args = new Bundle();
-		args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-		fragment.setArguments(args);
-		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.container, fragment).commit();
-			
-		return true;
-	}
-
-	/**
-	 * A dummy fragment representing a section of the app, but that simply
-	 * displays dummy text.
-	 */
-	public static class DummySectionFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
-
-		public DummySectionFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			// Create a new TextView and set its text to the fragment's section
-			// number argument value.
-			TextView textView = new TextView(getActivity());
-			textView.setGravity(Gravity.CENTER);
-			textView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
-			return textView;
-		}
-	}
+	
 
 	private void editListDialog(final int position){
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
