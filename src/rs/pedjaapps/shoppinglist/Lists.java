@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.channels.FileChannel;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,20 +19,24 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.text.InputType;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.deaux.fan.FanView;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 import de.devmil.common.ui.color.*;
@@ -44,15 +50,27 @@ public class Lists extends SherlockActivity {
 	private DatabaseHandler db;
 	List<String> lists;
 	int newColor;
-
+	TextView tv1;
+	LinearLayout ll;
+	ActionMode aMode;
+	FanView fan;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.lists);
+		setContentView(R.layout.fan);
+		fan = (FanView) findViewById(R.id.fan_view);
+        fan.setViews(R.layout.lists, R.layout.lists_row);
+		tv1 = (TextView)findViewById(R.id.tv1);
+		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
-		//db.addItem(new ItemsDatabaseEntry("test", 5, 56, 45, null, "$", "25.05.1991", false), "test");
-		try {
+		fan.showMenu();
+		/*
+		 * This method backups database to sdcard for debuging purposes
+		 * Remove it in final release
+		 * */
+	try {
 	        File sd = Environment.getExternalStorageDirectory();
 	        File data = Environment.getDataDirectory();
 
@@ -75,7 +93,6 @@ public class Lists extends SherlockActivity {
 	    }
 		
 		actionBar = getSupportActionBar();
-		//lists = db.getAllListsNames();
 
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
@@ -92,54 +109,51 @@ public class Lists extends SherlockActivity {
 
 		for (final ListsEntry entry : getListsEntries()) {
 			listsAdapter.add(entry);
+			setUI();
 		}
 
+		listsListView.setOnItemLongClickListener(new OnItemLongClickListener(){
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int position, long id) {
+				if(aMode!=null){
+					aMode.finish();
+				}
+				aMode = startActionMode(new ListActionMode(position+1));
+				return true;
+			}
+
+			
+			
+		});
+		
 	}
 
+	private  void setUI(){
+		if(listsAdapter.isEmpty()==false){
+			tv1.setVisibility(View.GONE);
+			ll.setVisibility(View.GONE);
+		}
+		else{
+			tv1.setVisibility(View.VISIBLE);
+			ll.setVisibility(View.VISIBLE);
+		}
+	}
+	
 	private List<ListsEntry> getListsEntries() {
 
 		final List<ListsEntry> entries = new ArrayList<ListsEntry>();
-
+		List<ListsDatabaseEntry> dbEntry = db.getAllLists();
+		for(ListsDatabaseEntry e: dbEntry){
+		entries.add(new ListsEntry(e.getName(), e.getColor(), e.getDate()));
+		}
 		
-		entries.add(new ListsEntry("test", "25.05.2005", 0xff6500ff));
-
-		/*
-		 * for (TimesEntry t : times) { entries.add(new
-		 * TISEntry(String.valueOf(t.getFreq()/1000)+"Mhz", hrTime(t.getTime()),
-		 * String.valueOf(t.getTime()*100/totalTime) + "%",
-		 * (int)(t.getTime()*100/totalTime)));
-		 * System.out.println(hrTime(t.getTime())); }
-		 */
-
 		return entries;
 	}
 
-	private String hrTime(long time) {
-
-		String timeString;
-		String s = String.valueOf((int) ((time / 100) % 60));
-		String m = String.valueOf((int) ((time / (100 * 60)) % 60));
-		String h = String.valueOf((int) ((time / (100 * 3600)) % 24));
-		String d = String.valueOf((int) (time / (100 * 60 * 60 * 24)));
-		StringBuilder builder = new StringBuilder();
-		if (!d.equals("0")) {
-			builder.append(d + "d:");
-
-		}
-		if (!h.equals("0")) {
-			builder.append(h + "h:");
-
-		}
-		if (!m.equals("0")) {
-			builder.append(m + "m:");
-
-		}
-
-		builder.append(s + "s");
-
-		timeString = builder.toString();
-		return timeString;
-
+	private String getDate(){
+		return DateFormat.getDateTimeInstance().format(new Date());
 	}
 
 	@Override
@@ -154,61 +168,42 @@ public class Lists extends SherlockActivity {
 
 		if (item.getItemId() == R.id.menu_add) {
 			addListDialog();
-
+			
 		}
 
-		/*if (item.getItemId() == R.id.menu_delete) {
-			db.removeList(getSupportActionBar().getSelectedNavigationIndex() + 1);
-			adapter.remove(adapter.getItem(getSupportActionBar()
-					.getSelectedNavigationIndex()));
-			adapter.notifyDataSetChanged();
+		if (item.getItemId() == R.id.menu_clear) {
+			deleteAllDialog();
 
-		}*/
+		}
 
 		return super.onOptionsItemSelected(item);
 
 	}
 	
-	/*private void editListDialog(final int position){
+	private void deleteAllDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    	final EditText input = new EditText(this);
-    	input.setGravity(Gravity.CENTER_HORIZONTAL);
-    	input.setSingleLine(true);
-		input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-		input.setSelectAllOnFocus(true);
+    	
 		
-			builder.setTitle("Rename List");
-			builder.setMessage("Enter new List Name");
-			builder.setIcon(R.drawable.ic_menu_edit);
-			input.setText(db.getList(position));
+			builder.setTitle("Delete All Lists");
+			builder.setMessage("Are you sure?");
+			builder.setIcon(R.drawable.ic_menu_delete);
 		
-				
-				builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which)
 						{
-							
-                            String inputText = input.getText().toString();
-				            
-						    if(inputText.length()==0){
-								Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+							List<ListsDatabaseEntry> entry = db.getAllLists();
+							for(ListsDatabaseEntry e : entry){
+								db.deleteList(e);
 							}
-							else if(db.listExists(inputText)){
-								Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
-							}
-							else{
-								adapter.remove(db.getList(position));
-								db.setListName(position, inputText);
-							lists = db.getAllListsNames();
-								adapter.insert(inputText, position-1);
-								adapter.notifyDataSetChanged();
-								
-							}
+							listsAdapter.clear();
+							listsAdapter.notifyDataSetChanged();
+                            setUI();
 							
 						}
 					});
 					
-        	builder.setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+        	builder.setNegativeButton(getResources().getString(android.R.string.no), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
@@ -216,12 +211,14 @@ public class Lists extends SherlockActivity {
 
 			}
 		});
-				builder.setView(input);
+				
 
 				AlertDialog alert = builder.create();
 
 				alert.show();
-}*/
+}
+	
+
 
 private void addListDialog(){
 	AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -229,19 +226,20 @@ private void addListDialog(){
 	LayoutInflater inflater = (LayoutInflater)Lists.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	View view = inflater.inflate(R.layout.edit_list_layout, null);
 		final RelativeLayout color = (RelativeLayout)view.findViewById(R.id.color);	
-		color.setBackgroundColor(Color.YELLOW);
+		newColor = Color.YELLOW;
+		color.setBackgroundColor(newColor);
 		final EditText input = (EditText)view.findViewById(R.id.name);
 		
 		color.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+				
 				ColorSelectorDialog dialog = new ColorSelectorDialog(Lists.this, new OnColorChangedListener(){
 					
 					@Override
 					public void colorChanged(int newColor) {
-						// TODO Auto-generated method stub
+						
 						color.setBackgroundColor(newColor);
 						Lists.this.newColor = newColor;
 					}
@@ -275,10 +273,13 @@ private void addListDialog(){
 				}
 				
 				else{
-					db.addList(new ListsDatabaseEntry(inputText, newColor));
-					
+					String date = getDate();
+					db.addList(new ListsDatabaseEntry(inputText, newColor, date));
+					listsAdapter.add(new ListsEntry(inputText, newColor, date));
+					listsAdapter.notifyDataSetChanged();
 					
 				}
+				setUI();
 			}
 		});
 
@@ -295,6 +296,121 @@ private void addListDialog(){
 	AlertDialog alert = builder.create();
 
 	alert.show();
+}
+
+private void editListDialog(final int position){
+	AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+	LayoutInflater inflater = (LayoutInflater)Lists.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	View view = inflater.inflate(R.layout.edit_list_layout, null);
+		final RelativeLayout color = (RelativeLayout)view.findViewById(R.id.color);	
+		ListsDatabaseEntry dbList = db.getList(position);
+		final String originalName = dbList.getName();
+		newColor = dbList.getColor();
+		color.setBackgroundColor(newColor);
+		final EditText input = (EditText)view.findViewById(R.id.name);
+		input.setText(dbList.getName());
+		color.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				
+				ColorSelectorDialog dialog = new ColorSelectorDialog(Lists.this, new OnColorChangedListener(){
+					
+					@Override
+					public void colorChanged(int newColor) {
+					
+						color.setBackgroundColor(newColor);
+						Lists.this.newColor = newColor;
+					}
+					
+				}, Color.YELLOW);
+				dialog.setTitle("Pick Color");
+				dialog.show();
+			}
+
+			
+			
+		});
+		
+		builder.setTitle("Edit List");
+		builder.setMessage("Edit List Details");
+		builder.setIcon(R.drawable.ic_menu_edit);
+		
+
+	builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+
+				String inputText = input.getText().toString();
+
+				if(inputText.length()==0){
+					Toast.makeText(Lists.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+				}
+				/*else if(db.listExists(inputText)){
+					Toast.makeText(Lists.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
+				}*/
+				
+				else{
+					String date = getDate();
+					System.out.println(db.updateList(new ListsDatabaseEntry(inputText, newColor, date), position, originalName));
+					listsAdapter.remove(listsAdapter.getItem(position-1));
+					listsAdapter.insert(new ListsEntry(inputText, newColor, date), position-1);
+					listsAdapter.notifyDataSetChanged();
+					
+				}
+				setUI();
+			}
+		});
+
+	builder.setNegativeButton(getResources().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+
+
+			}
+		});
+	builder.setView(view);
+
+	AlertDialog alert = builder.create();
+
+	alert.show();
+}
+
+private final class ListActionMode implements ActionMode.Callback {
+	int id;
+	public ListActionMode(int id){
+		this.id = id;
+	}
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        
+        menu.add("Edit")
+            .setIcon(R.drawable.ic_menu_edit)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+       //Toast.makeText(Lists.this, "Got click: " + id, Toast.LENGTH_SHORT).show();
+        editListDialog(id);
+    	mode.finish();
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+    }
 }
 
 }

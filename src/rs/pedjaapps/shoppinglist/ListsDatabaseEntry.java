@@ -7,6 +7,7 @@ public class ListsDatabaseEntry
     int _id;
     String _name;
     int _color;
+    String _date;
     
    
     
@@ -18,25 +19,26 @@ public class ListsDatabaseEntry
 
     }
     // constructor
-    public ListsDatabaseEntry(int id, String name, int color
+    public ListsDatabaseEntry(int id, String name, int color, String date
     				
 				 )
 	{
         this._id = id;
         this._name = name;
         this._color = color;
+        this._date = date;
        
     }
 
     // constructor
     public ListsDatabaseEntry(String name, 
-			int color
+			int color, String date
 				 )
 	{
 
     	this._name = name;
         this._color = color;
-      
+        this._date = date;
     }
     // getting ID
     public int getID()
@@ -70,6 +72,17 @@ public class ListsDatabaseEntry
     public void setColor(int color)
 	{
         this._color = color;
+    }
+    
+    public String getDate()
+	{
+        return this._date;
+    }
+
+    // setting Name
+    public void setDate(String date)
+	{
+        this._date = date;
     }
 
 }

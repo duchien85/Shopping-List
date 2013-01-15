@@ -109,7 +109,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 		addListDialog();
 			
 		}	
-		if (item.getItemId() == R.id.menu_edit)
+		/*if (item.getItemId() == R.id.menu_edit)
 		{
 			
 			editListDialog(getSupportActionBar().getSelectedNavigationIndex()+1);
@@ -123,7 +123,7 @@ public class ListActivity extends SherlockFragmentActivity implements
 			adapter.remove(adapter.getItem(getSupportActionBar().getSelectedNavigationIndex()));
 			adapter.notifyDataSetChanged();
 			
-		}	
+		}	*/
 		
 	return super.onOptionsItemSelected(item);
 

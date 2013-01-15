@@ -62,7 +62,7 @@
             ads:adSize="BANNER"
             ads:adUnitId="a150f3c94a7b13d"
            
-            ads:testDevices="TEST_EMULATOR, 3CE20BB714ED336822A2508B26BBC32B" />
+            ads:testDevices="TEST_EMULATOR,AE41B448B31E81C499F854E7CB1519A9" />
     </LinearLayout>
-
+    
 </RelativeLayout>

@@ -29,7 +29,7 @@ public final class ListsAdapter extends ArrayAdapter<ListsEntry>
 		final ListsEntry entry = getItem(position);
 
 		viewHolder.nameView.setText(entry.getName());
-		viewHolder.timeView.setText(entry.getDateTime());
+		viewHolder.timeView.setText(entry.getDate());
 		viewHolder.colorView.setBackgroundColor(entry.getColor());
 
 		return view;

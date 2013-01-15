@@ -4,14 +4,14 @@ public final class ListsEntry
 {
 
 	private final String name;
-	private final String date_time;
 	private final int color;
+	private final String date;
 
-	public ListsEntry(final String name, final String date_time, final int color)
+	public ListsEntry(final String name, final int color, final String date)
 	{
 		this.name = name;
-		this.date_time = date_time;
 		this.color = color;
+		this.date = date;
 
 	}
 
@@ -22,9 +22,9 @@ public final class ListsEntry
 	}
 
 
-	public String getDateTime()
+	public String getDate()
 	{
-		return date_time;
+		return date;
 	}
 
 	public int getColor()

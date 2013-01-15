@@ -24,11 +24,12 @@ public class DatabaseHandler extends SQLiteOpenHelper
     private static final String TABLE_LISTS = "lists_table";
     //private static final String TABLE_ITEM = "item_table";
     // Table Columns names
-    private static final String KEY_LISTS_ID = "id";
+    private static final String KEY_LISTS_ID = "_id";
     private static final String KEY_LISTS_NAME = "name";
     private static final String KEY_LISTS_COLOR = "color";
+    private static final String KEY_LISTS_DATE = "date";
 
-	private static final String KEY_ITEM_ROWID="id";
+	private static final String KEY_ITEM_ROWID="_id";
     private static final String KEY_ITEM_NAME="name";
 	private static final String KEY_ITEM_QUANTITY="quantity";
 	private static final String KEY_ITEM_VALUE="value";
@@ -51,7 +52,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
         String CREATE_LISTS_TABLE = "CREATE TABLE " + TABLE_LISTS + "("
 			+ KEY_LISTS_ID + " INTEGER PRIMARY KEY,"
 			+ KEY_LISTS_NAME + " TEXT,"
-			+ KEY_LISTS_COLOR + " INTEGER" 
+			+ KEY_LISTS_COLOR + " INTEGER," 
+			+ KEY_LISTS_DATE + " TEXT"
 			+
 			")";
         
@@ -100,7 +102,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
         ContentValues values = new ContentValues();
         values.put(KEY_LISTS_NAME, list.getName());
         values.put(KEY_LISTS_COLOR, list.getColor()); 
-       
+        values.put(KEY_LISTS_DATE, list.getDate());
 
         // Inserting Row
         db.insert(TABLE_LISTS, null, values);
@@ -115,8 +117,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
         Cursor cursor = db.query(TABLE_LISTS, new String[] { KEY_LISTS_ID,
 									 KEY_LISTS_NAME,
-									 KEY_LISTS_COLOR
-									 
+									 KEY_LISTS_COLOR,
+									 KEY_LISTS_DATE
 									}, KEY_LISTS_ID + "=?",
 								 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
@@ -124,7 +126,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
         ListsDatabaseEntry profile = new ListsDatabaseEntry(Integer.parseInt(cursor.getString(0)),
 									  cursor.getString(1),
-									  Integer.parseInt(cursor.getString(2))	  
+									  Integer.parseInt(cursor.getString(2)),
+									  cursor.getString(3)
 									  );
         // return list
         db.close();
@@ -138,8 +141,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
         Cursor cursor = db.query(TABLE_LISTS, new String[] { KEY_LISTS_ID,
 									 KEY_LISTS_NAME,
-									 KEY_LISTS_COLOR
-									 
+									 KEY_LISTS_COLOR,
+									 KEY_LISTS_DATE
 									}, KEY_LISTS_NAME + "=?",
 								 new String[] { name }, null, null, null, null);
         if (cursor != null)
@@ -147,7 +150,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
         ListsDatabaseEntry profile = new ListsDatabaseEntry(Integer.parseInt(cursor.getString(0)),
 									  cursor.getString(1),
-									  Integer.parseInt(cursor.getString(2))
+									  Integer.parseInt(cursor.getString(2)),
+									  cursor.getString(3)
 									);
         
         db.close();
@@ -173,7 +177,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
                 list.setID(Integer.parseInt(cursor.getString(0)));
                 list.setName(cursor.getString(1));
                 list.setColor(Integer.parseInt(cursor.getString(2)));
-              
+                list.setDate(cursor.getString(3));
+                
                 
                 // Adding  to list
                 lists.add(list);
@@ -187,37 +192,41 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
 
     // Updating single 
-    public int updateList(ListsDatabaseEntry list)
+    public int updateList(ListsDatabaseEntry list, int position, String name)
 	{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_LISTS_NAME, list.getName());
         values.put(KEY_LISTS_COLOR, list.getColor());
+        values.put(KEY_LISTS_DATE, list.getDate());
         
         // updating row
-        db.close();
+        //db.close();
+        if(!name.equals(list.getName())){
+        db.execSQL("ALTER TABLE " + name + " RENAME TO " + list.getName());
+        }
         return db.update(TABLE_LISTS, values, KEY_LISTS_ID + " = ?",
-						 new String[] { String.valueOf(list.getID()) });
-        
-	}
+						 new String[] { String.valueOf(position) });
+        }
 
     // Deleting single profile
-    public void deleteList(ListsDatabaseEntry profile)
+    public void deleteList(ListsDatabaseEntry list)
 	{
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LISTS, KEY_LISTS_ID + " = ?",
-				  new String[] { String.valueOf(profile.getID()) });
+				  new String[] { String.valueOf(list.getID()) });
+        db.execSQL("drop table "+list.getName());
         db.close();
     }
 
-    public void deleteListByName(ListsDatabaseEntry profile)
+   /* public void deleteListByName(ListsDatabaseEntry profile)
 	{
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LISTS, KEY_LISTS_NAME + " = ?",
 				  new String[] { String.valueOf(profile.getName()) });
         db.close();
-    }
+    }*/
 
     // Getting profile Count
     public int getListsCount()
@@ -232,13 +241,24 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
     
     public boolean listExists(String listName) {
-		List<String> lists = new ArrayList<String>();
+		/*List<String> lists = new ArrayList<String>();
 		ListsDatabaseEntry listsEntry = new ListsDatabaseEntry();
 		int listCount = getAllLists().size();
 		for(int i = 0; i < listCount; i++){
 			lists.add(listsEntry.getName());
 		}
-		return lists.indexOf(listName) > 0;
+		return lists.indexOf(listName) > 0;*/
+    	SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_LISTS, new String[] { KEY_LISTS_ID,
+									 KEY_LISTS_NAME,
+									 KEY_LISTS_COLOR,
+									 KEY_LISTS_DATE
+									}, KEY_LISTS_NAME + "=?",
+								 new String[] { listName }, null, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
 	}
     
     void addItem(ItemsDatabaseEntry item, String listName)

@@ -6,15 +6,11 @@
         android:title="Add"
         android:icon="@drawable/ic_menu_add"/>
 
-	<item
-        android:id="@+id/menu_edit"
-        android:showAsAction="ifRoom|withText"
-        android:title="Edit"
-        android:icon="@drawable/ic_menu_edit"/>
+	
 		
 	<item
-        android:id="@+id/menu_delete"
+        android:id="@+id/menu_clear"
         android:showAsAction="ifRoom|withText"
-        android:title="Delete"
+        android:title="Clear"
         android:icon="@drawable/ic_menu_delete"/>
 </menu>
