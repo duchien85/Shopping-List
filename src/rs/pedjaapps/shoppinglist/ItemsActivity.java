@@ -9,6 +9,7 @@ import android.content.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.actionbarsherlock.app.*;
 import android.text.InputType;
@@ -18,7 +19,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.deaux.fan.FanView;
 
-public class ListActivity extends SherlockActivity {
+public class ItemsActivity extends SherlockActivity {
 
 	
 	private DatabaseHandler db;
@@ -29,16 +30,20 @@ public class ListActivity extends SherlockActivity {
 
 	private ListsAdapter itemsAdapter;
 	private ListView itemsListView;
+	private static final int GET_CODE = 0;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fan);
+		Intent intent = getIntent();
+		String name = intent.getExtras().getString("name");
 		
 		db = new DatabaseHandler(this);
 		fan = (FanView) findViewById(R.id.fan_view);
         fan.setViews(R.layout.activity_list, R.layout.side_list);
 		actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setTitle(name);
 		
 		sideListView = (ListView) findViewById(R.id.list);
 		sideAdapter = new ListsAdapter(this, R.layout.side_lists_row);
@@ -49,6 +54,17 @@ public class ListActivity extends SherlockActivity {
 			sideAdapter.add(entry);
 			
 		}
+		sideListView.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+					long arg3) {
+				ListsDatabaseEntry list = db.getList(position+1);
+				actionBar.setTitle(list.getName());
+				sideMenu();
+			}
+			
+		});
 		
 	}
 
@@ -93,18 +109,15 @@ public class ListActivity extends SherlockActivity {
 
 		if (item.getItemId() == R.id.menu_add)
 		{
-		addListDialog();
+		//addListDialog();
+			Intent intent = new Intent(this, EditItemActivity.class);
+			intent.putExtra("name", "");
+			startActivityForResult(intent, GET_CODE);
 			
-		}	
-		/*if (item.getItemId() == R.id.menu_edit)
-		{
-			
-			editListDialog(getSupportActionBar().getSelectedNavigationIndex()+1);
-			
-
 		}	
 		
-			if (item.getItemId() == R.id.menu_delete)
+		
+		/*	if (item.getItemId() == R.id.menu_delete)
 		{
 			//db.removeList(getSupportActionBar().getSelectedNavigationIndex()+1);
 			adapter.remove(adapter.getItem(getSupportActionBar().getSelectedNavigationIndex()));
@@ -144,7 +157,7 @@ public class ListActivity extends SherlockActivity {
 	                            String inputText = input.getText().toString();
 					            
 							    if(inputText.length()==0){
-									Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+									Toast.makeText(ItemsActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
 								}
 								/*else if(db.listExists(inputText)){
 									Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
@@ -195,7 +208,7 @@ public class ListActivity extends SherlockActivity {
 					String inputText = input.getText().toString();
 
 					if(inputText.length()==0){
-						Toast.makeText(ListActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+						Toast.makeText(ItemsActivity.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
 					}
 					/**else if(db.listExists(inputText)){
 						Toast.makeText(ListActivity.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
@@ -230,5 +243,17 @@ public class ListActivity extends SherlockActivity {
 
 		alert.show();
 	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	  super.onActivityResult(requestCode, resultCode, data);
+	  
+	  if (requestCode == GET_CODE){
+	   if (resultCode == RESULT_OK) {
+		   
+	   }
+	  }
+	
+	   }
 	
 }

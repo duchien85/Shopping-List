@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="There are no lists" />
+        android:text="There are no items" />
 
     <LinearLayout
         android:id="@+id/ll1"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="to add new list" />
+            android:text="to add new item" />
     </LinearLayout>
 	
 	<ListView

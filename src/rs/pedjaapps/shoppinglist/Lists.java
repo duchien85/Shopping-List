@@ -116,9 +116,11 @@ public class Lists extends SherlockActivity {
 		listsListView.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long arg3) {
-				Intent intent = new Intent(Lists.this, ListActivity.class);
+				ListsDatabaseEntry list = db.getList(position+1);
+				Intent intent = new Intent(Lists.this, ItemsActivity.class);
+				intent.putExtra("name", list.getName());
 				startActivity(intent);
 			}
 			
