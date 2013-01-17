@@ -5,16 +5,16 @@ public final class ItemsEntry
 
 
 	private final String name;
-    private final int quantity;
-    private final int value;
+    private final double quantity;
+    private final double value;
     private final String image;
     private final String unit;
-    private String curency;
-    private boolean done;
+    private final String curency;
+    private final boolean done;
 
 	public ItemsEntry(final String name,
-	final int quantity,
-	final int value, final String image,
+	final double quantity,
+	final double value, final String image,
     final String unit, final String curency,
     final boolean done	)
 	{
@@ -35,12 +35,12 @@ public final class ItemsEntry
 	}
 
 
-	public int getQuantity()
+	public double getQuantity()
 	{
 		return quantity;
 	}
 
-	public int geValue()
+	public double getValue()
 	{
 		return value;
 	}

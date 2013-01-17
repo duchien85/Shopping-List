@@ -15,7 +15,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 5;
 
     // Database Name
     private static final String DATABASE_NAME = "ShoppingList.db";
@@ -38,7 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String KEY_ITEM_UNIT="unit";
 	private static final String KEY_ITEM_CURENCY="curency";
 	private static final String KEY_ITEM_DONE="done";
-	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "RUB", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD", "DIN"};
+	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD"};
 
     public DatabaseHandler(Context context)
 	{
@@ -73,9 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			+ CURENCY_KEYS[12] + " DOUBLE,"
 			+ CURENCY_KEYS[13] + " DOUBLE,"
 			+ CURENCY_KEYS[14] + " DOUBLE,"
-			+ CURENCY_KEYS[15] + " DOUBLE,"
-			+ CURENCY_KEYS[16] + " DOUBLE,"
-			+ CURENCY_KEYS[17] + " DOUBLE"
+			+ CURENCY_KEYS[15] + " DOUBLE"
 			
 			+
 			")";
@@ -344,6 +342,70 @@ public class DatabaseHandler extends SQLiteOpenHelper
     	else{
     		return true;
     	}
+    }
+    
+    void addCurency(CurenciesEntry entry)
+	{
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        	values.put(CURENCY_KEYS[1], entry.getEur());
+        	values.put(CURENCY_KEYS[2], entry.getGbp());
+        	values.put(CURENCY_KEYS[3], entry.getHrk());
+        	values.put(CURENCY_KEYS[4], entry.getHuf());
+        	values.put(CURENCY_KEYS[5], entry.getJpy());
+        	values.put(CURENCY_KEYS[6], entry.getKwd());
+        	values.put(CURENCY_KEYS[7], entry.getNok());
+        	values.put(CURENCY_KEYS[8], entry.getSek());
+        	values.put(CURENCY_KEYS[9], entry.getUsd());
+        	values.put(CURENCY_KEYS[10], entry.getDkk());
+        	values.put(CURENCY_KEYS[11], entry.getCzk());
+        	values.put(CURENCY_KEYS[12], entry.getChf());
+        	values.put(CURENCY_KEYS[13], entry.getCad());
+        	values.put(CURENCY_KEYS[14], entry.getBam());
+        	values.put(CURENCY_KEYS[15], entry.getAud());
+        
+        
+
+        // Inserting Row
+        db.delete(TABLE_CURENCIES, CURENCY_KEYS[0] + " = ?",
+  				  new String[] { String.valueOf(1) });
+        db.insert(TABLE_CURENCIES, null, values);
+        db.close(); // Closing database connection
+    }
+    
+    double getCurency(String columnName)
+	{
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CURENCIES, new String[] { CURENCY_KEYS[0],
+        		CURENCY_KEYS[1],
+        		CURENCY_KEYS[2],
+        		CURENCY_KEYS[3],
+        		CURENCY_KEYS[4],
+        		CURENCY_KEYS[5],
+        		CURENCY_KEYS[6],
+        		CURENCY_KEYS[7],
+        		CURENCY_KEYS[8],
+        		CURENCY_KEYS[9],
+        		CURENCY_KEYS[10],
+        		CURENCY_KEYS[11],
+        		CURENCY_KEYS[12],
+        		CURENCY_KEYS[13],
+        		CURENCY_KEYS[14],
+        		CURENCY_KEYS[15]
+									 
+									}, CURENCY_KEYS[0] + "=?",
+								 new String[] { String.valueOf(1) }, null, null, null, null);
+        double value = 0;
+        if (cursor != null){
+            cursor.moveToFirst();
+        	value = cursor.getDouble(cursor.getColumnIndex(columnName));
+        }
+        // return list
+        db.close();
+        cursor.close();
+        return value;
     }
     
 }

@@ -29,7 +29,7 @@ public class ItemsActivity extends SherlockActivity
 	private ListsAdapter sideAdapter;
 	private ListView sideListView;
 
-	private ListsAdapter itemsAdapter;
+	private ItemsAdapter itemsAdapter;
 	private ListView itemsListView;
 	private static final int GET_CODE = 0;
 	String listName;
@@ -70,9 +70,33 @@ public class ItemsActivity extends SherlockActivity
 				}
 
 			});
+		
+		itemsListView = (ListView) findViewById(R.id.list_items);
+		itemsAdapter = new ItemsAdapter(this, R.layout.item_row);
+
+		itemsListView.setAdapter(itemsAdapter);
+
+		for (final ItemsEntry entry : getItemsEntries())
+		{
+			itemsAdapter.add(entry);
+
+		}
 
 	}
 
+	private List<ItemsEntry> getItemsEntries()
+	{
+
+		final List<ItemsEntry> entries = new ArrayList<ItemsEntry>();
+		//List<ItemsDatabaseEntry> dbEntry = db.getAllLists();
+		//for (ListsDatabaseEntry e: dbEntry)
+		//{
+			entries.add(new ItemsEntry("test", 4.6, 3.0, listName, "kg", "eur", true));
+		//}
+
+		return entries;
+	}
+	
 	private List<ListsEntry> getSideListEntries()
 	{
 

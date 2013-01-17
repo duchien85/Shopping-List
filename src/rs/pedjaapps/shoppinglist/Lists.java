@@ -26,6 +26,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -62,7 +63,8 @@ public class Lists extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.lists);
-		
+		new SyncCurencies(this).execute();
+		System.out.println(new CurencyConvertor().convert(this, 20, "usd"));
 		tv1 = (TextView)findViewById(R.id.tv1);
 		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
@@ -240,9 +242,9 @@ private void addListDialog(){
 
 	LayoutInflater inflater = (LayoutInflater)Lists.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	View view = inflater.inflate(R.layout.edit_list_layout, null);
-		final RelativeLayout color = (RelativeLayout)view.findViewById(R.id.color);	
+		final Button color = (Button)view.findViewById(R.id.color);	
 		newColor = Color.YELLOW;
-		color.setBackgroundColor(newColor);
+		color.setTextColor(newColor);
 		final EditText input = (EditText)view.findViewById(R.id.name);
 		
 		color.setOnClickListener(new OnClickListener(){
@@ -255,7 +257,7 @@ private void addListDialog(){
 					@Override
 					public void colorChanged(int newColor) {
 						
-						color.setBackgroundColor(newColor);
+						color.setTextColor(newColor);
 						Lists.this.newColor = newColor;
 					}
 					
@@ -318,11 +320,11 @@ private void editListDialog(final int position){
 
 	LayoutInflater inflater = (LayoutInflater)Lists.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	View view = inflater.inflate(R.layout.edit_list_layout, null);
-		final RelativeLayout color = (RelativeLayout)view.findViewById(R.id.color);	
+		final Button color = (Button)view.findViewById(R.id.color);	
 		ListsDatabaseEntry dbList = db.getList(position);
 		final String originalName = dbList.getName();
 		newColor = dbList.getColor();
-		color.setBackgroundColor(newColor);
+		color.setTextColor(newColor);
 		final EditText input = (EditText)view.findViewById(R.id.name);
 		input.setText(dbList.getName());
 		color.setOnClickListener(new OnClickListener(){
@@ -335,7 +337,7 @@ private void editListDialog(final int position){
 					@Override
 					public void colorChanged(int newColor) {
 					
-						color.setBackgroundColor(newColor);
+						color.setTextColor(newColor);
 						Lists.this.newColor = newColor;
 					}
 					
