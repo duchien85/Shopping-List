@@ -34,8 +34,6 @@ public class EditItemActivity extends SherlockActivity {
 	private DatabaseHandler db;
 	FanView fan;
 	ActionBar actionBar;
-	private ListsAdapter sideAdapter;
-	private ListView sideListView;
 
 	private ListsAdapter itemsAdapter;
 	private ListView itemsListView;
@@ -244,9 +242,13 @@ public class EditItemActivity extends SherlockActivity {
 		//addListDialog();
 			Intent intent = new Intent();
 			intent.putExtra("name", title.getText().toString());
-			intent.putExtra("quantity", quantity.getText().toString());
-			//intent.putExtra(name, value);
+			intent.putExtra("quantity", Double.parseDouble(quantity.getText().toString()));
+			intent.putExtra("unit", unitValue);
+			intent.putExtra("image", imageUri);
+			intent.putExtra("price", Double.parseDouble(price.getText().toString()));
+			intent.putExtra("curency", curencyValue);
 			setResult(RESULT_OK, intent);
+			finish();
 			
 		}	
 		if (item.getItemId() == R.id.menu_cancel)

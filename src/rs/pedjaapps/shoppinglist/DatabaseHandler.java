@@ -15,13 +15,14 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Database Name
     private static final String DATABASE_NAME = "ShoppingList.db";
 
     // table names
     private static final String TABLE_LISTS = "lists_table";
+	private static final String TABLE_CURENCIES = "curencies";
     //private static final String TABLE_ITEM = "item_table";
     // Table Columns names
     private static final String KEY_LISTS_ID = "_id";
@@ -37,7 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String KEY_ITEM_UNIT="unit";
 	private static final String KEY_ITEM_CURENCY="curency";
 	private static final String KEY_ITEM_DONE="done";
-	
+	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "RUB", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD", "DIN"};
 
     public DatabaseHandler(Context context)
 	{
@@ -56,7 +57,31 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			+
 			")";
         
+		String CREATE_CURENCIES_TABLE = "CREATE TABLE " + TABLE_CURENCIES + "("
+			+ CURENCY_KEYS[0] + " INTEGER PRIMARY KEY,"
+			+ CURENCY_KEYS[1] + " DOUBLE,"
+			+ CURENCY_KEYS[2] + " DOUBLE,"
+			+ CURENCY_KEYS[3] + " DOUBLE,"
+			+ CURENCY_KEYS[4] + " DOUBLE,"
+			+ CURENCY_KEYS[5] + " DOUBLE,"
+			+ CURENCY_KEYS[6] + " DOUBLE,"
+			+ CURENCY_KEYS[7] + " DOUBLE,"
+			+ CURENCY_KEYS[8] + " DOUBLE,"
+			+ CURENCY_KEYS[9] + " DOUBLE,"
+			+ CURENCY_KEYS[10] + " DOUBLE,"
+			+ CURENCY_KEYS[11] + " DOUBLE,"
+			+ CURENCY_KEYS[12] + " DOUBLE,"
+			+ CURENCY_KEYS[13] + " DOUBLE,"
+			+ CURENCY_KEYS[14] + " DOUBLE,"
+			+ CURENCY_KEYS[15] + " DOUBLE,"
+			+ CURENCY_KEYS[16] + " DOUBLE,"
+			+ CURENCY_KEYS[17] + " DOUBLE"
+			
+			+
+			")";
+		
         db.execSQL(CREATE_LISTS_TABLE);
+		db.execSQL(CREATE_CURENCIES_TABLE);
     }
 
     
@@ -66,6 +91,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	{
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LISTS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURENCIES);
 
         // Create tables again
         onCreate(db);
@@ -80,8 +106,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
     	String CREATE_ITEM_TABLE = "CREATE TABLE " + name + "("
     			+ KEY_ITEM_ROWID + " INTEGER PRIMARY KEY,"
     			+ KEY_ITEM_NAME + " TEXT,"
-    			+ KEY_ITEM_QUANTITY + " INTEGER,"
-    			+ KEY_ITEM_VALUE + " INTEGER," 
+    			+ KEY_ITEM_QUANTITY + " DOUBLE,"
+    			+ KEY_ITEM_VALUE + " DOUBLE," 
     			+ KEY_ITEM_IMAGE + " TEXT," 
     			+ KEY_ITEM_UNIT + " TEXT,"
     			+ KEY_ITEM_CURENCY + " TEXT," 
@@ -298,8 +324,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
         ItemsDatabaseEntry items = new ItemsDatabaseEntry(Integer.parseInt(cursor.getString(0)),
 									  cursor.getString(1),
-									  Integer.parseInt(cursor.getString(2)),
-									  cursor.getInt(3),
+									  cursor.getDouble(2),
+									  cursor.getDouble(3),
 									  cursor.getString(4), 
 									  cursor.getString(5), 
 									  cursor.getString(6), 

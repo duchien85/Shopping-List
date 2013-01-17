@@ -6,8 +6,8 @@ public class ItemsDatabaseEntry
 	//private variables
     int _id;
     String _name;
-    int _quantity;
-    int _value;
+    double _quantity;
+    double _value;
     String _image;
     String _unit;
     String _curency;
@@ -20,7 +20,7 @@ public class ItemsDatabaseEntry
     }
     // constructor
     public ItemsDatabaseEntry(int id, String name, 
-    				int quantity, int value,
+    				double quantity, double value,
     				String image, 
     				String unit,
     				String curency,
@@ -40,8 +40,7 @@ public class ItemsDatabaseEntry
 
     // constructor
     public ItemsDatabaseEntry(String name, 
-			int quantity, int value,
-			int totalValue,
+			double quantity, double value,
 			String image, 
 			String unit,
 			String curency,
@@ -83,7 +82,7 @@ public class ItemsDatabaseEntry
     }
 
     
-    public int getQuantity()
+    public double getQuantity()
 	{
         return this._quantity;
     }
@@ -93,7 +92,7 @@ public class ItemsDatabaseEntry
         this._quantity = quantity;
     }
 
-    public int getValue()
+    public double getValue()
 	{
         return this._value;
     }
