@@ -334,6 +334,41 @@ public class DatabaseHandler extends SQLiteOpenHelper
         cursor.close();
         return items;
     }
+	
+	public List<ItemsDatabaseEntry> getAllItems(String listName)
+	{
+        List<ItemsDatabaseEntry> lists = new ArrayList<ItemsDatabaseEntry>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + listName;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst())
+		{
+            do {
+            	ItemsDatabaseEntry list = new ItemsDatabaseEntry();
+                list.setID(Integer.parseInt(cursor.getString(0)));
+                list.setName(cursor.getString(1));
+                list.setQuantity(cursor.getDouble(2));
+                list.setValue(cursor.getDouble(3));
+				list.setImage(cursor.getString(4));
+				list.setUnit(cursor.getString(5));
+				list.setCurency(cursor.getString(6));
+				list.setDone(intToBool(cursor.getInt(7)));
+
+
+                // Adding  to list
+                lists.add(list);
+            } while (cursor.moveToNext());
+        }
+
+        // return list
+        db.close();
+        cursor.close();
+        return lists;
+    }
    
     private boolean intToBool(int i){
     	if(i == 0){

@@ -88,11 +88,11 @@ public class ItemsActivity extends SherlockActivity
 	{
 
 		final List<ItemsEntry> entries = new ArrayList<ItemsEntry>();
-		//List<ItemsDatabaseEntry> dbEntry = db.getAllLists();
-		//for (ListsDatabaseEntry e: dbEntry)
-		//{
-			entries.add(new ItemsEntry("test", 4.6, 3.0, listName, "kg", "eur", true));
-		//}
+		List<ItemsDatabaseEntry> dbEntry = db.getAllItems(listName);
+		for (ItemsDatabaseEntry e: dbEntry)
+		{
+			entries.add(new ItemsEntry(e.getName(), e.getQuantity(), e.getValue(), e.getImage(), e.getUnit(), e.getCurency(), e.getDone()));
+		}
 
 		return entries;
 	}
@@ -181,13 +181,22 @@ public class ItemsActivity extends SherlockActivity
 			if (resultCode == RESULT_OK)
 			{
 				db.addItem(new ItemsDatabaseEntry(data.getExtras().getString("name"), 
-												  data.getExtras().getDouble("quantity"),
+											  data.getExtras().getDouble("quantity"),
 												  data.getExtras().getDouble("price"),
 												  data.getExtras().getString("image"),
 												  data.getExtras().getString("unit"),
 												  data.getExtras().getString("curency"),
 												  data.getExtras().getBoolean("done")
 												  ), listName);
+				itemsAdapter.add(new ItemsEntry(data.getExtras().getString("name"), 
+														data.getExtras().getDouble("quantity"),
+				data.getExtras().getDouble("price"),
+				data.getExtras().getString("image"),
+				data.getExtras().getString("unit"),
+				data.getExtras().getString("curency"),
+				data.getExtras().getBoolean("done")
+				));	
+				itemsAdapter.notifyDataSetChanged();
 			}
 		}
 

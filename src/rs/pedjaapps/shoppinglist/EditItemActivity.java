@@ -53,6 +53,8 @@ public class EditItemActivity extends SherlockActivity {
 	private String imageUri;
 	private String unitValue;
 	private String curencyValue;
+	TextView tv1;
+	LinearLayout ll;
 	
 	class RptUpdater implements Runnable {
 	    public void run() {
@@ -240,14 +242,16 @@ public class EditItemActivity extends SherlockActivity {
 		if (item.getItemId() == R.id.menu_save)
 		{
 		//addListDialog();
+		String mPrice = String.format("%.2f", ( Double.parseDouble(price.getText().toString())*Double.parseDouble(quantity.getText().toString())));
 			Intent intent = new Intent();
 			intent.putExtra("name", title.getText().toString());
 			intent.putExtra("quantity", Double.parseDouble(quantity.getText().toString()));
 			intent.putExtra("unit", unitValue);
 			intent.putExtra("image", imageUri);
-			intent.putExtra("price", Double.parseDouble(price.getText().toString()));
-			intent.putExtra("curency", curencyValue);
+			intent.putExtra("price",Double.parseDouble(mPrice));
+		    intent.putExtra("curency", curencyValue);
 			setResult(RESULT_OK, intent);
+		//	Toast.makeText(this, mPrice, Toast.LENGTH_LONG).show();
 			finish();
 			
 		}	
@@ -305,5 +309,15 @@ public class EditItemActivity extends SherlockActivity {
 	    }
 	}
 	
+	private  void setUI(){
+		if(listsAdapter.isEmpty()==false){
+			tv1.setVisibility(View.GONE);
+			ll.setVisibility(View.GONE);
+		}
+		else{
+			tv1.setVisibility(View.VISIBLE);
+			ll.setVisibility(View.VISIBLE);
+		}
+	}
 	
 }

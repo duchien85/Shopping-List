@@ -87,7 +87,7 @@ public class ItemsDatabaseEntry
         return this._quantity;
     }
 
-    public void setQuantity(int quantity)
+    public void setQuantity(double quantity)
 	{
         this._quantity = quantity;
     }
@@ -97,7 +97,7 @@ public class ItemsDatabaseEntry
         return this._value;
     }
 
-    public void setValue(int value)
+    public void setValue(double value)
 	{
         this._value = value;
     }

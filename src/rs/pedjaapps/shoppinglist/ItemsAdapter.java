@@ -38,11 +38,13 @@ public final class ItemsAdapter extends ArrayAdapter<ItemsEntry>
 			
 		}
 		viewHolder.nameView.setText(entry.getName());
-		viewHolder.quantityView.setText(entry.getQuantity()+entry.getUnit());
+		viewHolder.quantityView.setText(entry.getQuantity()+" "+entry.getUnit());
 		viewHolder.priceView.setText(entry.getValue()+entry.getCurency());
+		String image = entry.getImage();
 		
-		viewHolder.imageView.setImageURI(Uri.parse(entry.getImage()));
-
+		if(image!=null && image.length()>0){
+		viewHolder.imageView.setImageURI(Uri.parse(image));
+        }
 		return view;
 	}
 
