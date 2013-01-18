@@ -37,6 +37,12 @@ public final class ItemsAdapter extends ArrayAdapter<ItemsEntry>
 			viewHolder.priceView.setPaintFlags(viewHolder.nameView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 			
 		}
+		else{
+			viewHolder.nameView.setPaintFlags(viewHolder.nameView.getPaintFlags()  & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+			viewHolder.quantityView.setPaintFlags(viewHolder.nameView.getPaintFlags()  & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+			viewHolder.priceView.setPaintFlags(viewHolder.nameView.getPaintFlags()  & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+			
+		}
 		viewHolder.nameView.setText(entry.getName());
 		viewHolder.quantityView.setText(entry.getQuantity()+" "+entry.getUnit());
 		viewHolder.priceView.setText(entry.getValue()+entry.getCurency());

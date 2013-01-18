@@ -53,8 +53,8 @@ public class EditItemActivity extends SherlockActivity {
 	private String imageUri;
 	private String unitValue;
 	private String curencyValue;
-	TextView tv1;
-	LinearLayout ll;
+	String itemName;
+	String listName;
 	
 	class RptUpdater implements Runnable {
 	    public void run() {
@@ -72,7 +72,7 @@ public class EditItemActivity extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_edit);
-		
+		db = new DatabaseHandler(this);
 		title = (EditText)findViewById(R.id.item_title);
 		quantity = (EditText)findViewById(R.id.item_quantity);
 		plus = (ImageView)findViewById(R.id.plus);
@@ -83,14 +83,15 @@ public class EditItemActivity extends SherlockActivity {
 		curency = (Spinner)findViewById(R.id.curency);
 		actionBar = getSupportActionBar();
 		Intent intent = getIntent();
-		String title = intent.getExtras().getString("name");
-		if(title.length()!=0){
-			actionBar.setTitle("Edit - "+title);
+		itemName = intent.getExtras().getString("name");
+		listName = intent.getExtras().getString("listName");
+		System.out.println(listName+itemName);
+		if(itemName.length()!=0){
+			actionBar.setTitle("Edit - "+itemName);
 		}
 		else{
 			actionBar.setTitle("Add New List");
 		}
-		
 		plus.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -241,8 +242,28 @@ public class EditItemActivity extends SherlockActivity {
 
 		if (item.getItemId() == R.id.menu_save)
 		{
-		//addListDialog();
-		String mPrice = String.format("%.2f", ( Double.parseDouble(price.getText().toString())*Double.parseDouble(quantity.getText().toString())));
+			if(title.getText().toString().length()==0){
+				Toast.makeText(this, "Item name cannot be empty!", Toast.LENGTH_LONG).show();
+			}
+			else if(db.itemExists(listName, title.getText().toString())){
+				Toast.makeText(this, "Item already exists.\nTry differente name!", Toast.LENGTH_LONG).show();
+			}
+			
+			else if(quantity.getText().toString().length()==0){
+				Toast.makeText(this, "Quantity cannot be empty!", Toast.LENGTH_LONG).show();
+			}
+			else if(Double.parseDouble(quantity.getText().toString())==0){
+				Toast.makeText(this, "Quantity cannot be 0", Toast.LENGTH_LONG).show();
+			}
+			
+			else if(price.getText().toString().length()==0){
+				Toast.makeText(this, "Price cannot be empty!", Toast.LENGTH_LONG).show();
+			}
+			else if(Double.parseDouble(price.getText().toString())==0){
+				Toast.makeText(this, "Price cannot be 0", Toast.LENGTH_LONG).show();
+			}
+			else{
+			String mPrice = String.format("%.2f", ( Double.parseDouble(price.getText().toString())*Double.parseDouble(quantity.getText().toString())));
 			Intent intent = new Intent();
 			intent.putExtra("name", title.getText().toString());
 			intent.putExtra("quantity", Double.parseDouble(quantity.getText().toString()));
@@ -251,9 +272,8 @@ public class EditItemActivity extends SherlockActivity {
 			intent.putExtra("price",Double.parseDouble(mPrice));
 		    intent.putExtra("curency", curencyValue);
 			setResult(RESULT_OK, intent);
-		//	Toast.makeText(this, mPrice, Toast.LENGTH_LONG).show();
 			finish();
-			
+			}
 		}	
 		if (item.getItemId() == R.id.menu_cancel)
 		{
@@ -304,20 +324,12 @@ public class EditItemActivity extends SherlockActivity {
 	        if(resultCode == RESULT_OK){  
 	        	Uri uri = imageReturnedIntent.getData();
 	        	imageUri = uri.toString();
-	        	
+	        	ImageView img = (ImageView)findViewById(R.id.imageView1);
+	        	img.setImageURI(uri);
 	        }
 	    }
 	}
 	
-	private  void setUI(){
-		if(listsAdapter.isEmpty()==false){
-			tv1.setVisibility(View.GONE);
-			ll.setVisibility(View.GONE);
-		}
-		else{
-			tv1.setVisibility(View.VISIBLE);
-			ll.setVisibility(View.VISIBLE);
-		}
-	}
+	
 	
 }

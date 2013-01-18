@@ -280,6 +280,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 								 new String[] { listName }, null, null, null, null);
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
+        db.close();
         return exists;
 	}
     
@@ -370,6 +371,51 @@ public class DatabaseHandler extends SQLiteOpenHelper
         return lists;
     }
    
+	public void deleteItem(ItemsDatabaseEntry items, String listName)
+	{
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(listName, KEY_ITEM_ROWID + " = ?",
+				  new String[] { String.valueOf(items.getID()) });
+        
+        db.close();
+    }
+	
+	public boolean itemExists(String listName, String itemName) {
+    	SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(listName, new String[] { KEY_ITEM_ROWID,
+									 KEY_ITEM_NAME,
+									 KEY_ITEM_QUANTITY,
+									 KEY_ITEM_VALUE,
+									 KEY_ITEM_IMAGE,
+									 KEY_ITEM_UNIT,
+									 KEY_ITEM_CURENCY,
+									 KEY_ITEM_DONE
+									}, KEY_ITEM_NAME + "=?",
+								 new String[] { itemName }, null, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        db.close();
+        return exists;
+	}
+	
+	public int updateItem(ItemsDatabaseEntry item, int position, String listName)
+	{
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_ITEM_NAME, item.getName());
+        values.put(KEY_ITEM_QUANTITY, item.getQuantity());  
+        values.put(KEY_ITEM_VALUE, item.getValue());
+        values.put(KEY_ITEM_IMAGE, item.getImage());
+        values.put(KEY_ITEM_UNIT, item.getUnit()); 
+        values.put(KEY_ITEM_CURENCY, item.getCurency());
+        values.put(KEY_ITEM_DONE, item.getDone()); 
+        
+        return db.update(listName, values, KEY_ITEM_ROWID + " = ?",
+						 new String[] { String.valueOf(position) });
+        }
+	
     private boolean intToBool(int i){
     	if(i == 0){
     		return false;

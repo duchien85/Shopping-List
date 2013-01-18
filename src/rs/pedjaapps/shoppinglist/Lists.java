@@ -176,22 +176,42 @@ public class Lists extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.activity_list, menu);
+		//getSupportMenuInflater().inflate(R.menu.activity_list, menu);
+		boolean isLight = true;//SampleList.THEME == R.style.Theme_Sherlock_Light;
+
+        menu.add(1, 1, 1, "Add")
+            .setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark)
+            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        menu.add(2, 2, 2,"Clear")
+        	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
+        	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+        menu.add(3, 3, 3,"Settings")
+    	.setIcon(isLight ? R.drawable.settings_light : R.drawable.settings_dark)
+    	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		if (item.getItemId() == R.id.menu_add) {
+		switch(item.getItemId()){
+		case 1:
 			addListDialog();
-			
-		}
-
-		if (item.getItemId() == R.id.menu_clear) {
+			return true;
+		
+		case 2:
 			deleteAllDialog();
-
+			return true;
+		
+		case 3:
+			Intent intent = new Intent(Lists.this, Preferences.class);
+			startActivity(intent);
+			return true;
 		}
+		
+
+		
 
 		return super.onOptionsItemSelected(item);
 
@@ -235,7 +255,41 @@ public class Lists extends SherlockActivity {
 				alert.show();
 }
 	
+	private void deleteListDialog(final int position){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    	
+		final ListsDatabaseEntry dbList = db.getList(position);
+			builder.setTitle("Delete "+dbList.getName());
+			builder.setMessage("Are you sure?");
+			builder.setIcon(R.drawable.ic_menu_delete);
+		
+				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which)
+						{
+							db.deleteList(dbList);
+							
+							listsAdapter.remove(listsAdapter.getItem(position-1));
+							listsAdapter.notifyDataSetChanged();
+                            setUI();
+							
+						}
+					});
+					
+        	builder.setNegativeButton(getResources().getString(android.R.string.no), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				
 
+			}
+		});
+				
+
+				AlertDialog alert = builder.create();
+
+				alert.show();
+}
 
 private void addListDialog(){
 	AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -404,9 +458,14 @@ private final class ListActionMode implements ActionMode.Callback {
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         
-        menu.add("Edit")
+      /*  menu.add("Edit")
             .setIcon(R.drawable.ic_menu_edit)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add("Delete")
+        .setIcon(R.drawable.ic_menu_delete)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*/
+    	getSupportMenuInflater().inflate(R.menu.list_action, menu);
+		
 
         
         return true;
@@ -419,8 +478,13 @@ private final class ListActionMode implements ActionMode.Callback {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-       //Toast.makeText(Lists.this, "Got click: " + id, Toast.LENGTH_SHORT).show();
-        editListDialog(id);
+    	
+    	if(item.getItemId()==R.id.menu_edit){
+    		editListDialog(id);
+    	}
+    	if(item.getItemId()==R.id.menu_delete){
+    		deleteListDialog(id);
+    	}
     	mode.finish();
         return true;
     }
