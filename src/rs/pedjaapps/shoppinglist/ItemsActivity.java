@@ -1,24 +1,21 @@
 package rs.pedjaapps.shoppinglist;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.annotation.*;
 import android.app.*;
 import android.content.*;
 import android.os.*;
+import android.preference.*;
 import android.view.*;
-import android.view.View.OnClickListener;
 import android.widget.*;
-import android.widget.AdapterView.OnItemClickListener;
-
+import android.widget.AdapterView.*;
 import com.actionbarsherlock.app.*;
-import android.text.InputType;
+import com.actionbarsherlock.view.*;
+import com.deaux.fan.*;
+import com.google.ads.*;
+import java.util.*;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.deaux.fan.FanView;
 
 public class ItemsActivity extends SherlockActivity {
 
@@ -50,6 +47,13 @@ public class ItemsActivity extends SherlockActivity {
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setTitle(listName);
 		
+		SharedPreferences sharedPrefs = PreferenceManager
+			.getDefaultSharedPreferences(this);
+		boolean ads = sharedPrefs.getBoolean("ads", true);
+		if (ads == true) {
+			AdView adView = (AdView) findViewById(R.id.ad);
+			adView.loadAd(new AdRequest());
+		}
 
 		tv1 = (TextView) findViewById(R.id.tv1);
 		ll = (LinearLayout) findViewById(R.id.ll1);
