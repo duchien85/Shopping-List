@@ -31,7 +31,8 @@ public final class ListsAdapter extends ArrayAdapter<ListsEntry>
 		viewHolder.nameView.setText(entry.getName());
 		viewHolder.timeView.setText(entry.getDate());
 		viewHolder.colorView.setBackgroundColor(entry.getColor());
-
+		viewHolder.doneView.setText(entry.getDone());
+		
 		return view;
 	}
 
@@ -68,6 +69,7 @@ public final class ListsAdapter extends ArrayAdapter<ListsEntry>
 			viewHolder.nameView = (TextView) workingView.findViewById(R.id.name);
 			viewHolder.timeView = (TextView) workingView.findViewById(R.id.date);
 			viewHolder.colorView = (RelativeLayout) workingView.findViewById(R.id.color);
+			viewHolder.doneView = (TextView) workingView.findViewById(R.id.done);
 			
 			workingView.setTag(viewHolder);
 
@@ -85,6 +87,7 @@ public final class ListsAdapter extends ArrayAdapter<ListsEntry>
 		public TextView nameView;
 		public TextView timeView;
 		public RelativeLayout colorView;
+		public TextView doneView;
 
 	}
 

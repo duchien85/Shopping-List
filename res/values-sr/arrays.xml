@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="theme_entry">
-        <item>Light Theme</item>
+        <item>Svetla Tema</item>
         <item>Light Theme with dark action bar</item>
-        <item>Dark Theme</item>  
+        <item>Tamna Tema</item>  
     </string-array>
 
     <string-array name="theme_values">
@@ -13,22 +13,22 @@
     </string-array>
     
     <string-array name="curency_entry">
-        <item>EUR - European Union</item>
-        <item>GBP - Great Britain</item>
-        <item>HRK - Croatia</item>
-        <item>HUF - Hungary</item> 
+        <item>EUR - Evropska Unija</item>
+        <item>GBP - Velika Britanija</item>
+        <item>HRK - Hrvatska</item>
+        <item>HUF - Mađarska</item> 
         <item>JPY - Japan</item> 
-        <item>KWD - Kuwait</item>
-        <item>NOK - Norway</item>
-        <item>SEK - Sweden</item>
-        <item>USD - United States</item>
-        <item>DKK - Denmark</item>
-        <item>CZK - Czech Republic</item>
-        <item>CHF - Switzerlan</item>
+        <item>KWD - Kuvajt</item>
+        <item>NOK - Norveška</item>
+        <item>SEK - Švetska</item>
+        <item>USD - Sjedinjene Države</item>
+        <item>DKK - Danska</item>
+        <item>CZK - Ceska</item>
+        <item>CHF - Švajcarska</item>
         <item>CAD - Canada</item>
-        <item>BAM - Bosnia and Herzegovina</item>
-        <item>AUD - Australia</item>
-        <item>DIN - Serbian</item>
+        <item>BAM - Bosna and Hercegovina</item>
+        <item>AUD - Australja</item>
+        <item>DIN - Srbija</item>
     </string-array>
 
     <string-array name="curency_values">

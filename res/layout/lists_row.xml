@@ -16,17 +16,28 @@
 
     </RelativeLayout>
 
+	<LinearLayout
+		android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+		android:orientation="vertical"
+		>
+	
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
         android:text="name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+		<TextView
+			android:id="@+id/done"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="done"/>
+</LinearLayout>
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"

@@ -168,7 +168,14 @@ public class Lists extends SherlockActivity {
 		
 	}
 
-	
+	public void onResume(){
+		listsAdapter.clear();
+		for (final ListsEntry entry : getListsEntries()) {
+			listsAdapter.add(entry);
+			setUI();
+		}
+		super.onResume();
+	}
 	
 	private  void setUI(){
 		if(listsAdapter.isEmpty()==false){
@@ -186,12 +193,25 @@ public class Lists extends SherlockActivity {
 		final List<ListsEntry> entries = new ArrayList<ListsEntry>();
 		List<ListsDatabaseEntry> dbEntry = db.getAllLists();
 		for(ListsDatabaseEntry e: dbEntry){
-		entries.add(new ListsEntry(e.getName(), e.getColor(), e.getDate()));
+		entries.add(new ListsEntry(e.getName(), e.getColor(), e.getDate(), calculateDone(e.getName())));
 		}
 		
 		return entries;
 	}
 
+	private String calculateDone(String listName){
+		List<ItemsDatabaseEntry> items = db.getAllItems(listName);
+		int done = 0;
+		int all = 0;
+		for(ItemsDatabaseEntry e: items){
+			if(e.getDone()){
+				done++;
+			}
+			all++;
+		}
+		return done+"/"+all +" items bought";
+	}
+	
 	private String getDate(){
 		return DateFormat.getDateTimeInstance().format(new Date());
 	}
@@ -376,7 +396,7 @@ private void addListDialog(){
 				else{
 					String date = getDate();
 					db.addList(new ListsDatabaseEntry(inputText, newColor, date));
-					listsAdapter.add(new ListsEntry(inputText, newColor, date));
+					listsAdapter.add(new ListsEntry(inputText, newColor, date, calculateDone(inputText)));
 					listsAdapter.notifyDataSetChanged();
 					
 				}
@@ -457,7 +477,7 @@ private void editListDialog(final int position){
 					String date = getDate();
 					System.out.println(db.updateList(new ListsDatabaseEntry(inputText, newColor, date), position, originalName));
 					listsAdapter.remove(listsAdapter.getItem(position-1));
-					listsAdapter.insert(new ListsEntry(inputText, newColor, date), position-1);
+					listsAdapter.insert(new ListsEntry(inputText, newColor, date, calculateDone(inputText)), position-1);
 					listsAdapter.notifyDataSetChanged();
 					
 				}

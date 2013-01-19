@@ -197,13 +197,16 @@ public class ItemsActivity extends SherlockActivity {
 		CurencyConverter converter = new CurencyConverter(this);
 		List<ItemsDatabaseEntry> items = db.getAllItems(listName);
 		double total = 0.00;
+		double bought = 0.00;
 		for(ItemsDatabaseEntry e: items){
 			double temp = converter.convert(e.getValue(), e.getCurency());
 			total+=temp;
-			System.out.println(e.getName()+temp);
+			if(e.getDone()==false){
+				bought+=temp;
+			}
 		}
-		System.out.println(total);
-		return String.format("%.2f",total)+curency.toUpperCase();
+		
+		return String.format("%.2f",total)+"/"+String.format("%.2f",bought)+curency.toUpperCase();
 		
 	}
 	
@@ -225,7 +228,7 @@ public class ItemsActivity extends SherlockActivity {
 		final List<ListsEntry> entries = new ArrayList<ListsEntry>();
 		List<ListsDatabaseEntry> dbEntry = db.getAllLists();
 		for (ListsDatabaseEntry e : dbEntry) {
-			entries.add(new ListsEntry(e.getName(), e.getColor(), ""));
+			entries.add(new ListsEntry(e.getName(), e.getColor(), "", ""));
 		}
 
 		return entries;

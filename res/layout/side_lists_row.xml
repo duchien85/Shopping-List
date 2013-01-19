@@ -34,4 +34,10 @@
         android:layout_gravity="bottom"
         android:text="date" />
 
+	<TextView
+		android:id="@+id/done"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="done"/>
+		
 </LinearLayout>
