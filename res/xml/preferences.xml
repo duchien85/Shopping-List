@@ -2,19 +2,33 @@
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-   
-
     <PreferenceCategory
-            android:title="Theme">
+            android:title="UI Options">
 
        
         <ListPreference
                 android:key="theme"
+                android:defaultValue="light"
                 android:title="Theme"
                 android:summary=""
                 android:entries="@array/theme_entry"
                 android:entryValues="@array/theme_values"
                 android:dialogTitle="Select Theme" />
+
+    </PreferenceCategory>
+    
+    <PreferenceCategory
+            android:title="Other Options">
+
+       
+        <ListPreference
+                android:key="curency"
+                android:title="Default Curency"
+                android:defaultValue="eur"
+                android:summary=""
+                android:entries="@array/curency_entry"
+                android:entryValues="@array/curency_values"
+                android:dialogTitle="Select Curency" />
 
     </PreferenceCategory>
 

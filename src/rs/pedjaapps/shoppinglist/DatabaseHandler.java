@@ -15,7 +15,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     // Database Name
     private static final String DATABASE_NAME = "ShoppingList.db";
@@ -38,7 +38,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String KEY_ITEM_UNIT="unit";
 	private static final String KEY_ITEM_CURENCY="curency";
 	private static final String KEY_ITEM_DONE="done";
-	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD"};
+	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD", "DIN"};
 
     public DatabaseHandler(Context context)
 	{
@@ -73,7 +73,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			+ CURENCY_KEYS[12] + " DOUBLE,"
 			+ CURENCY_KEYS[13] + " DOUBLE,"
 			+ CURENCY_KEYS[14] + " DOUBLE,"
-			+ CURENCY_KEYS[15] + " DOUBLE"
+			+ CURENCY_KEYS[15] + " DOUBLE,"
+			+ CURENCY_KEYS[16] + " DOUBLE"
 			
 			+
 			")";
@@ -445,6 +446,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
         	values.put(CURENCY_KEYS[13], entry.getCad());
         	values.put(CURENCY_KEYS[14], entry.getBam());
         	values.put(CURENCY_KEYS[15], entry.getAud());
+        	values.put(CURENCY_KEYS[16], 1.00);
         
         
 
@@ -474,7 +476,8 @@ public class DatabaseHandler extends SQLiteOpenHelper
         		CURENCY_KEYS[12],
         		CURENCY_KEYS[13],
         		CURENCY_KEYS[14],
-        		CURENCY_KEYS[15]
+        		CURENCY_KEYS[15],
+                CURENCY_KEYS[16]
 									 
 									}, CURENCY_KEYS[0] + "=?",
 								 new String[] { String.valueOf(1) }, null, null, null, null);

@@ -28,9 +28,10 @@
             android:text="Tap" />
 
         <ImageView
+            android:id="@+id/action_plus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_menu_add" />
+            android:src="@drawable/add_dark" />
 
         <TextView
             android:layout_width="wrap_content"

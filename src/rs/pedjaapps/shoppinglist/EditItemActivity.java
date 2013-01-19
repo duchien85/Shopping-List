@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.*;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.*;
 import android.view.View.OnClickListener;
@@ -55,6 +56,9 @@ public class EditItemActivity extends SherlockActivity {
 	private String curencyValue;
 	String itemName;
 	String listName;
+	boolean isEdit;
+	ImageView img;
+	boolean done;
 	
 	class RptUpdater implements Runnable {
 	    public void run() {
@@ -71,6 +75,19 @@ public class EditItemActivity extends SherlockActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		String theme = sharedPrefs.getString("theme", "light");
+		if(theme.equals("light")){
+			setTheme(R.style.Theme_Sherlock_Light);
+			}
+			else if(theme.equals("dark")){
+				setTheme(R.style.Theme_Sherlock);
+			}
+			else if(theme.equals("light_dark_action_bar")){
+				setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
+				
+			}
 		setContentView(R.layout.item_edit);
 		db = new DatabaseHandler(this);
 		title = (EditText)findViewById(R.id.item_title);
@@ -81,6 +98,7 @@ public class EditItemActivity extends SherlockActivity {
 		image = (ImageButton)findViewById(R.id.image);
 		price = (EditText)findViewById(R.id.item_price);
 		curency = (Spinner)findViewById(R.id.curency);
+		img = (ImageView)findViewById(R.id.imageView1);
 		actionBar = getSupportActionBar();
 		Intent intent = getIntent();
 		itemName = intent.getExtras().getString("name");
@@ -88,9 +106,20 @@ public class EditItemActivity extends SherlockActivity {
 		System.out.println(listName+itemName);
 		if(itemName.length()!=0){
 			actionBar.setTitle("Edit - "+itemName);
+			isEdit = true;
+			title.setText(intent.getExtras().getString("itemName"));
+			quantity.setText(String.valueOf(intent.getExtras().getDouble("quantity")));
+			imageUri = intent.getExtras().getString("image");
+			if(imageUri!=null && imageUri.length()>0){
+			img.setImageURI(Uri.parse(imageUri));
+			}
+			price.setText(String.format("%.2f",intent.getExtras().getDouble("price")));
+			done = intent.getExtras().getBoolean("done");
+			
 		}
 		else{
 			actionBar.setTitle("Add New List");
+			isEdit = false;
 		}
 		plus.setOnClickListener(new OnClickListener(){
 
@@ -165,7 +194,12 @@ public class EditItemActivity extends SherlockActivity {
 		unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
 		unit.setAdapter(unitAdapter);
 
-		
+		if(isEdit){
+			int unitSpinnerPosition = unitAdapter.getPosition(intent.getExtras().getString("unit"));
+			
+			//System.out.println(unitSpinnerPosition+" "+intent.getExtras().getString("unit"));
+			unit.setSelection(unitSpinnerPosition);
+		}
 
 		unit.setOnItemSelectedListener(new OnItemSelectedListener() {
         		@Override
@@ -186,7 +220,10 @@ public class EditItemActivity extends SherlockActivity {
 		curencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww
 		curency.setAdapter(curencyAdapter);
 
-		
+		if(isEdit){
+			int curencySpinnerPosition = curencyAdapter.getPosition(intent.getExtras().getString("curency"));
+			curency.setSelection(curencySpinnerPosition);
+		}
 
 		curency.setOnItemSelectedListener(new OnItemSelectedListener() {
         		@Override
@@ -245,9 +282,9 @@ public class EditItemActivity extends SherlockActivity {
 			if(title.getText().toString().length()==0){
 				Toast.makeText(this, "Item name cannot be empty!", Toast.LENGTH_LONG).show();
 			}
-			else if(db.itemExists(listName, title.getText().toString())){
+			/*else if(db.itemExists(listName, title.getText().toString())){
 				Toast.makeText(this, "Item already exists.\nTry differente name!", Toast.LENGTH_LONG).show();
-			}
+			}*/
 			
 			else if(quantity.getText().toString().length()==0){
 				Toast.makeText(this, "Quantity cannot be empty!", Toast.LENGTH_LONG).show();
@@ -263,6 +300,7 @@ public class EditItemActivity extends SherlockActivity {
 				Toast.makeText(this, "Price cannot be 0", Toast.LENGTH_LONG).show();
 			}
 			else{
+				
 			String mPrice = String.format("%.2f", ( Double.parseDouble(price.getText().toString())*Double.parseDouble(quantity.getText().toString())));
 			Intent intent = new Intent();
 			intent.putExtra("name", title.getText().toString());
@@ -271,8 +309,10 @@ public class EditItemActivity extends SherlockActivity {
 			intent.putExtra("image", imageUri);
 			intent.putExtra("price",Double.parseDouble(mPrice));
 		    intent.putExtra("curency", curencyValue);
+		    intent.putExtra("done", done);
 			setResult(RESULT_OK, intent);
 			finish();
+				
 			}
 		}	
 		if (item.getItemId() == R.id.menu_cancel)
@@ -324,7 +364,7 @@ public class EditItemActivity extends SherlockActivity {
 	        if(resultCode == RESULT_OK){  
 	        	Uri uri = imageReturnedIntent.getData();
 	        	imageUri = uri.toString();
-	        	ImageView img = (ImageView)findViewById(R.id.imageView1);
+	        	
 	        	img.setImageURI(uri);
 	        }
 	    }

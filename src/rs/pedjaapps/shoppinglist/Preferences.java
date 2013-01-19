@@ -5,8 +5,6 @@ package rs.pedjaapps.shoppinglist;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.app.ActionBar;
-import android.app.*;
-import android.app.ActivityManager.*;
 import android.content.*;
 import android.os.*;
 import android.preference.*;
@@ -18,6 +16,7 @@ public class Preferences extends SherlockPreferenceActivity
 {
 
 	private ListPreference themePrefList;
+	private ListPreference curencyPrefList;
 
 	
 	@Override
@@ -44,6 +43,24 @@ public class Preferences extends SherlockPreferenceActivity
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 themePrefList.setSummary(themePrefList.getEntries()[themePrefList.findIndexOfValue(newValue.toString())]);
+                return true;
+            }
+        }); 
+        
+        curencyPrefList = (ListPreference) findPreference("curency");
+        curencyPrefList.setDefaultValue(curencyPrefList.getEntryValues()[0]);
+        String curency = curencyPrefList.getValue();
+        if (curency == null) {
+        	curencyPrefList.setValue((String)curencyPrefList.getEntryValues()[0]);
+        	curency = curencyPrefList.getValue();
+        }
+        curencyPrefList.setSummary(curencyPrefList.getEntries()[curencyPrefList.findIndexOfValue(curency)]);
+
+
+        curencyPrefList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            	curencyPrefList.setSummary(curencyPrefList.getEntries()[curencyPrefList.findIndexOfValue(newValue.toString())]);
                 return true;
             }
         }); 

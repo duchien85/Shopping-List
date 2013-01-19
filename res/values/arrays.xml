@@ -12,4 +12,42 @@
         <item>dark</item>  
     </string-array>
     
+    <string-array name="curency_entry">
+        <item>EUR - European Union</item>
+        <item>GBP - Great Britain</item>
+        <item>HRK - Croatia</item>
+        <item>HUF - Hungary</item> 
+        <item>JPY - Japan</item> 
+        <item>KWD - Kuwait</item>
+        <item>NOK - Norway</item>
+        <item>SEK - Sweden</item>
+        <item>USD - United States</item>
+        <item>DKK - Denmark</item>
+        <item>CZK - Czech Republic</item>
+        <item>CHF - Switzerlan</item>
+        <item>CAD - Canada</item>
+        <item>BAM - Bosnia and Herzegovina</item>
+        <item>AUD - Australia</item>
+        <item>DIN - Serbian Dinar</item>
+    </string-array>
+
+    <string-array name="curency_values">
+        <item>eur</item>
+        <item>gbp</item>
+        <item>hrk</item>  
+        <item>huf</item>
+        <item>jpy</item>
+        <item>kwd</item>
+        <item>nok</item>
+        <item>sek</item>
+        <item>usd</item>
+        <item>dkk</item>
+        <item>czk</item>
+        <item>chf</item>
+        <item>cad</item>
+        <item>bam</item>
+        <item>aud</item>
+        <item>din</item>
+    </string-array>
+    
 </resources>

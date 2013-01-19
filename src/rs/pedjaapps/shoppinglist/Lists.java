@@ -28,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -56,18 +57,41 @@ public class Lists extends SherlockActivity {
 	TextView tv1;
 	LinearLayout ll;
 	ActionMode aMode;
+	boolean isLight;
+	String theme;
 	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		SharedPreferences sharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		theme = sharedPrefs.getString("theme", "light");
+		if(theme.equals("light")){
+			isLight = true;
+			setTheme(R.style.Theme_Sherlock_Light);
+			}
+			else if(theme.equals("dark")){
+				setTheme(R.style.Theme_Sherlock);
+				isLight = false;
+			}
+			else if(theme.equals("light_dark_action_bar")){
+				setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
+				isLight = true;
+			}
 		setContentView(R.layout.lists);
+		
 		new SyncCurencies(this).execute();
-		System.out.println(new CurencyConvertor().convert(this, 20, "usd"));
+		//System.out.println(new CurencyConverter().convert(this, 20, "usd"));
 		tv1 = (TextView)findViewById(R.id.tv1);
 		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
+		
+		ImageView plus = (ImageView)findViewById(R.id.action_plus);
+		
+		
+		
+		plus.setImageResource(isLight ? R.drawable.add_light : R.drawable.add_dark);
 		
 		/*
 		 * This method backups database to sdcard for debuging purposes
@@ -97,8 +121,7 @@ public class Lists extends SherlockActivity {
 		
 		actionBar = getSupportActionBar();
 
-		SharedPreferences sharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(this);
+		
 		boolean ads = sharedPrefs.getBoolean("ads", true);
 		if (ads == true) {
 			AdView adView = (AdView) findViewById(R.id.ad);
@@ -176,8 +199,15 @@ public class Lists extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getSupportMenuInflater().inflate(R.menu.activity_list, menu);
-		boolean isLight = true;//SampleList.THEME == R.style.Theme_Sherlock_Light;
+		if(theme.equals("light")){
+			isLight = true;
+			}
+			else if(theme.equals("dark")){
+				isLight = false;
+			}
+			else if(theme.equals("light_dark_action_bar")){
+				isLight = false;
+			}
 
         menu.add(1, 1, 1, "Add")
             .setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark)
@@ -223,7 +253,7 @@ public class Lists extends SherlockActivity {
 		
 			builder.setTitle("Delete All Lists");
 			builder.setMessage("Are you sure?");
-			builder.setIcon(R.drawable.ic_menu_delete);
+			builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
 		
 				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
@@ -261,7 +291,7 @@ public class Lists extends SherlockActivity {
 		final ListsDatabaseEntry dbList = db.getList(position);
 			builder.setTitle("Delete "+dbList.getName());
 			builder.setMessage("Are you sure?");
-			builder.setIcon(R.drawable.ic_menu_delete);
+			builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
 		
 				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
@@ -326,7 +356,7 @@ private void addListDialog(){
 		
 		builder.setTitle("Add List");
 		builder.setMessage("Enter List Name");
-		builder.setIcon(R.drawable.ic_menu_add);
+		builder.setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark);
 
 
 	builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -406,7 +436,7 @@ private void editListDialog(final int position){
 		
 		builder.setTitle("Edit List");
 		builder.setMessage("Edit List Details");
-		builder.setIcon(R.drawable.ic_menu_edit);
+		builder.setIcon(isLight ? R.drawable.edit_light : R.drawable.edit_dark);
 		
 
 	builder.setPositiveButton(getResources().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -458,14 +488,25 @@ private final class ListActionMode implements ActionMode.Callback {
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         
-      /*  menu.add("Edit")
-            .setIcon(R.drawable.ic_menu_edit)
-            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add("Delete")
-        .setIcon(R.drawable.ic_menu_delete)
-        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);*/
-    	getSupportMenuInflater().inflate(R.menu.list_action, menu);
-		
+     
+    	//getSupportMenuInflater().inflate(R.menu.list_action, menu);
+    	if(theme.equals("light")){
+			isLight = true;
+			}
+			else if(theme.equals("dark")){
+				isLight = false;
+			}
+			else if(theme.equals("light_dark_action_bar")){
+				isLight = false;
+			}
+		menu.add(1, 1, 1, "Edit")
+        .setIcon(isLight ? R.drawable.edit_light : R.drawable.edit_dark)
+        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.add(2, 2, 2,"Delete")
+    	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
+    	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+    
+
 
         
         return true;
@@ -479,10 +520,10 @@ private final class ListActionMode implements ActionMode.Callback {
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
     	
-    	if(item.getItemId()==R.id.menu_edit){
+    	if(item.getItemId()==1){
     		editListDialog(id);
     	}
-    	if(item.getItemId()==R.id.menu_delete){
+    	if(item.getItemId()==2){
     		deleteListDialog(id);
     	}
     	mode.finish();
