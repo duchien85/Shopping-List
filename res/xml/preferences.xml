@@ -23,13 +23,22 @@
        
         <ListPreference
                 android:key="curency"
-                android:title="Default Curency"
+                android:title="Default Currency"
                 android:defaultValue="eur"
                 android:summary=""
                 android:entries="@array/curency_entry"
                 android:entryValues="@array/curency_values"
-                android:dialogTitle="Select Curency" />
+                android:dialogTitle="Select Currency" />
 
+		<ListPreference
+			android:key="update"
+			android:title="Currency Update Interval"
+			android:defaultValue="86400000"
+			android:summary=""
+			android:entries="@array/update_entry"
+			android:entryValues="@array/update_values"
+			android:dialogTitle="Select Interval" />
+				
     </PreferenceCategory>
 
 </PreferenceScreen>

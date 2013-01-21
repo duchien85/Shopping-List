@@ -188,7 +188,7 @@ public class EditItemActivity extends SherlockActivity {
 		});
 		
 		String[] units = {"pieces", "kg", "lit", "gr", "cm", "package", "inch", "foot", "bottle", "box", "unit", "pair"};
-		String[] curencies = {"EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD", "DIN"};
+		String[] curencies = {"DIN","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD"};
 		
 		ArrayAdapter<String> unitAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, units);
 		unitAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down vieww

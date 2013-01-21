@@ -13,7 +13,8 @@
     </string-array>
     
     <string-array name="curency_entry">
-        <item>EUR - Evropska Unija</item>
+		<item>DIN - Srbija</item>
+		<item>EUR - Evropska Unija</item>
         <item>GBP - Velika Britanija</item>
         <item>HRK - Hrvatska</item>
         <item>HUF - Mađarska</item> 
@@ -28,11 +29,12 @@
         <item>CAD - Canada</item>
         <item>BAM - Bosna and Hercegovina</item>
         <item>AUD - Australja</item>
-        <item>DIN - Srbija</item>
+       
     </string-array>
 
     <string-array name="curency_values">
-        <item>eur</item>
+        <item>din</item>
+		<item>eur</item>
         <item>gbp</item>
         <item>hrk</item>  
         <item>huf</item>
@@ -47,7 +49,25 @@
         <item>cad</item>
         <item>bam</item>
         <item>aud</item>
-        <item>din</item>
+        
     </string-array>
     
+	<string-array name="update_entry">
+        <item>1sat</item>
+        <item>3sata</item>
+        <item>6sati</item>  
+		<item>12sati</item>
+        <item>18sati</item>
+        <item>24sata</item>  
+    </string-array>
+
+    <string-array name="update_values">
+		<item>3600000</item>
+        <item>10800000</item>
+        <item>21600000</item>  
+		<item>43200000</item>
+        <item>64800000</item>
+        <item>86400000</item>  
+    </string-array>
+	
 </resources>

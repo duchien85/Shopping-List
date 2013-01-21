@@ -19,6 +19,10 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import java.util.Date;
 
 
 public class SyncCurencies extends AsyncTask<String, Void, Double>
@@ -26,6 +30,7 @@ public class SyncCurencies extends AsyncTask<String, Void, Double>
 
 	Context context;
 	ProgressDialog pd;
+	
 	
 	public SyncCurencies(Context context)
 	{
@@ -92,6 +97,9 @@ public class SyncCurencies extends AsyncTask<String, Void, Double>
 					values.get(14)
 					));
 			System.out.println(values);
+			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+			SharedPreferences.Editor editor = sharedPrefs.edit();
+			editor.putLong("time",new Date().getTime()).commit();
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,16 +117,17 @@ public class SyncCurencies extends AsyncTask<String, Void, Double>
 
 	@Override
 	protected void onPreExecute(){
-		pd = new ProgressDialog(context);
+	/*	pd = new ProgressDialog(context);
 		pd.setMessage("Downloading Data");
 		pd.setIndeterminate(true);
-		pd.show();
+		pd.show();*/
+		Toast.makeText(context, "Updating currencies", Toast.LENGTH_LONG).show();
 	}
 	
 	@Override
 	protected void onPostExecute(Double result)
 	{
-		pd.dismiss();
+	//	pd.dismiss();
 	}
 }	
 

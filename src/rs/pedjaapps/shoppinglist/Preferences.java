@@ -17,6 +17,7 @@ public class Preferences extends SherlockPreferenceActivity
 
 	private ListPreference themePrefList;
 	private ListPreference curencyPrefList;
+	private ListPreference updatePrefList;
 
 	
 	@Override
@@ -64,6 +65,23 @@ public class Preferences extends SherlockPreferenceActivity
                 return true;
             }
         }); 
+		updatePrefList = (ListPreference) findPreference("update");
+        updatePrefList.setDefaultValue(updatePrefList.getEntryValues()[0]);
+        String update = updatePrefList.getValue();
+        if (update == null) {
+        	updatePrefList.setValue((String)updatePrefList.getEntryValues()[0]);
+        	update = updatePrefList.getValue();
+        }
+        updatePrefList.setSummary(updatePrefList.getEntries()[updatePrefList.findIndexOfValue(update)]);
+
+
+        updatePrefList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue) {
+					updatePrefList.setSummary(updatePrefList.getEntries()[updatePrefList.findIndexOfValue(newValue.toString())]);
+					return true;
+				}
+			}); 
         
 	}
 	

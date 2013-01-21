@@ -59,12 +59,12 @@ public class Lists extends SherlockActivity {
 	ActionMode aMode;
 	boolean isLight;
 	String theme;
-	
+	SharedPreferences sharedPrefs;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences sharedPrefs = PreferenceManager
+		sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		theme = sharedPrefs.getString("theme", "light");
 		if(theme.equals("light")){
@@ -81,14 +81,17 @@ public class Lists extends SherlockActivity {
 			}
 		setContentView(R.layout.lists);
 		
-		new SyncCurencies(this).execute();
 		//System.out.println(new CurencyConverter().convert(this, 20, "usd"));
+		//SetAlarm setAlarm = new SetAlarm(this);
+		//setAlarm.setAlarm();
 		tv1 = (TextView)findViewById(R.id.tv1);
 		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
 		
 		ImageView plus = (ImageView)findViewById(R.id.action_plus);
 		
+	//	Toast.makeText(this,  ""+new Date().getTime(), Toast.LENGTH_LONG).show();
+		checkSync();
 		
 		
 		plus.setImageResource(isLight ? R.drawable.add_light : R.drawable.add_dark);
@@ -177,6 +180,15 @@ public class Lists extends SherlockActivity {
 		super.onResume();
 	}
 	
+	public void checkSync(){
+		long savedTime = sharedPrefs.getLong("time",0);
+		long update = Long.parseLong(sharedPrefs.getString("update","86400000"));
+		if((savedTime+update)<=new Date().getTime()){
+			new SyncCurencies(this).execute();
+			
+		}
+	}
+	
 	private  void setUI(){
 		if(listsAdapter.isEmpty()==false){
 			tv1.setVisibility(View.GONE);
@@ -238,7 +250,9 @@ public class Lists extends SherlockActivity {
         menu.add(3, 3, 3,"Settings")
     	.setIcon(isLight ? R.drawable.settings_light : R.drawable.settings_dark)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
+		menu.add(4, 4, 4,"Update currencies")
+			//.setIcon(isLight ? R.drawable.settings_light : R.drawable.settings_dark)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		return true;
 	}
 
@@ -258,7 +272,11 @@ public class Lists extends SherlockActivity {
 			Intent intent = new Intent(Lists.this, Preferences.class);
 			startActivity(intent);
 			return true;
+		case 4:
+				new SyncCurencies(this).execute();
+		    return true;
 		}
+		
 		
 
 		
