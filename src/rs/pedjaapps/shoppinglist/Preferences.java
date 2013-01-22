@@ -23,8 +23,24 @@ public class Preferences extends SherlockPreferenceActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{        
-		super.onCreate(savedInstanceState);
+	
 
+	SharedPreferences sharedPrefs = PreferenceManager
+			.getDefaultSharedPreferences(this);
+	String them = sharedPrefs.getString("theme", "light");
+	
+		if(them.equals("light")){
+			setTheme(R.style.Theme_Sherlock_Light);
+		}
+		else if(them.equals("dark")){
+			setTheme(R.style.Theme_Sherlock);
+			
+		}
+		else if(them.equals("light_dark_action_bar")){
+			setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
+			
+		}
+			super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences); 
 		
 		ActionBar actionBar = getSupportActionBar();

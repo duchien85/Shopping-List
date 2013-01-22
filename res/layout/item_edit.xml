@@ -17,11 +17,22 @@
             android:layout_height="wrap_content"
             android:text="Item Title" />
 
-        <EditText
-            android:id="@+id/item_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+		<!--  <EditText
+		android:id="@+id/item_title"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_weight="1" />-->
+
+		<AutoCompleteTextView
+			android:id="@+id/item_title"
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content" 
+			android:layout_weight="1"
+			android:lines="1" 
+			android:inputType="textCapSentences"
+			android:completionThreshold="1" 
+			>
+			</AutoCompleteTextView>
     </LinearLayout>
 
     <ImageView

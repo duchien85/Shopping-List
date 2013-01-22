@@ -91,6 +91,7 @@ public class Lists extends SherlockActivity {
 		ImageView plus = (ImageView)findViewById(R.id.action_plus);
 		
 	//	Toast.makeText(this,  ""+new Date().getTime(), Toast.LENGTH_LONG).show();
+		firstLaunch();
 		checkSync();
 		
 		
@@ -180,12 +181,21 @@ public class Lists extends SherlockActivity {
 		super.onResume();
 	}
 	
-	public void checkSync(){
+	private void checkSync(){
 		long savedTime = sharedPrefs.getLong("time",0);
 		long update = Long.parseLong(sharedPrefs.getString("update","86400000"));
 		if((savedTime+update)<=new Date().getTime()){
 			new SyncCurencies(this).execute();
 			
+		}
+	}
+	
+	private void firstLaunch(){
+		boolean firstLaunch = sharedPrefs.getBoolean("firstLaunch",true);
+		if(firstLaunch){
+			new SyncCurencies(this).execute();
+			SharedPreferences.Editor editor = sharedPrefs.edit();
+			editor.putBoolean("firstLaunch",false).commit();
 		}
 	}
 	
@@ -493,7 +503,7 @@ private void editListDialog(final int position){
 				
 				else{
 					String date = getDate();
-					System.out.println(db.updateList(new ListsDatabaseEntry(inputText, newColor, date), position, originalName));
+					db.updateList(new ListsDatabaseEntry(inputText, newColor, date), position, originalName);
 					listsAdapter.remove(listsAdapter.getItem(position-1));
 					listsAdapter.insert(new ListsEntry(inputText, newColor, date, calculateDone(inputText)), position-1);
 					listsAdapter.notifyDataSetChanged();

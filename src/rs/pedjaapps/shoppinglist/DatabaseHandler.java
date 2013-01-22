@@ -23,6 +23,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
     // table names
     private static final String TABLE_LISTS = "lists_table";
 	private static final String TABLE_CURENCIES = "curencies";
+	private static final String TABLE_HISTORY = "history";
     //private static final String TABLE_ITEM = "item_table";
     // Table Columns names
     private static final String KEY_LISTS_ID = "_id";
@@ -38,6 +39,10 @@ public class DatabaseHandler extends SQLiteOpenHelper
 	private static final String KEY_ITEM_UNIT="unit";
 	private static final String KEY_ITEM_CURENCY="curency";
 	private static final String KEY_ITEM_DONE="done";
+	
+	private static final String KEY_HISTORY_ID="_id";
+	private static final String KEY_HISTORY_NAME="name";
+	
 	private static final String[] CURENCY_KEYS = {"_id","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD", "DIN"};
 
     public DatabaseHandler(Context context)
@@ -78,9 +83,16 @@ public class DatabaseHandler extends SQLiteOpenHelper
 			
 			+
 			")";
+			
+		String CREATE_HISTORY_TABLE = "CREATE TABLE " + TABLE_HISTORY + "("
+			+ KEY_HISTORY_ID + " INTEGER PRIMARY KEY,"
+			+ KEY_HISTORY_NAME + " TEXT"
+			+
+			")";
 		
         db.execSQL(CREATE_LISTS_TABLE);
 		db.execSQL(CREATE_CURENCIES_TABLE);
+		db.execSQL(CREATE_HISTORY_TABLE);
     }
 
     
@@ -91,6 +103,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_LISTS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CURENCIES);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_HISTORY);
 
         // Create tables again
         onCreate(db);
@@ -215,7 +228,7 @@ public class DatabaseHandler extends SQLiteOpenHelper
     }
 
     // Updating single 
-    public int updateList(ListsDatabaseEntry list, int position, String name)
+    public void updateList(ListsDatabaseEntry list, int position, String name)
 	{
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -229,8 +242,9 @@ public class DatabaseHandler extends SQLiteOpenHelper
         if(!name.equals(list.getName())){
         db.execSQL("ALTER TABLE " + name + " RENAME TO " + list.getName());
         }
-        return db.update(TABLE_LISTS, values, KEY_LISTS_ID + " = ?",
+        db.update(TABLE_LISTS, values, KEY_LISTS_ID + " = ?",
 						 new String[] { String.valueOf(position) });
+		db.close();
         }
 
     // Deleting single profile
@@ -491,6 +505,61 @@ public class DatabaseHandler extends SQLiteOpenHelper
         cursor.close();
         return value;
     }
+	
+	void addHistory(String history)
+	{
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_HISTORY_NAME, history);
+       
+
+        // Inserting Row
+        db.insert(TABLE_HISTORY, null, values);
+        db.close(); // Closing database connection
+       
+    }
     
+	public List<String> getHistory()
+	{
+        List<String> list = new ArrayList<String>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + TABLE_HISTORY;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst())
+		{
+            do {
+            	
+                
+                // Adding  to list
+                list.add(cursor.getString(1));
+            } while (cursor.moveToNext());
+        }
+
+        // return list
+        db.close();
+        cursor.close();
+        return list;
+    }
+	
+	public boolean historyItemExists(String listName) {
+	
+    	SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_HISTORY, new String[] { KEY_HISTORY_ID,
+									 KEY_HISTORY_NAME
+								 }, KEY_HISTORY_NAME + "=?",
+								 new String[] { listName }, null, null, null, null);
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        db.close();
+        return exists;
+	}
+    
+	
 }
 

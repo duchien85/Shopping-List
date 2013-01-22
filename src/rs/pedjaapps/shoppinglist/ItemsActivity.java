@@ -337,6 +337,9 @@ public class ItemsActivity extends SherlockActivity {
 		itemsAdapter.notifyDataSetChanged();
 		setUI();
 		totalText.setText(calculateTotal());
+		if(db.historyItemExists(data.getExtras().getString("name"))==false){
+			db.addHistory(data.getExtras().getString("name"));
+		}
 	}
 	
 	private void editItem(Intent data){
@@ -362,7 +365,9 @@ public class ItemsActivity extends SherlockActivity {
 							.getExtras().getBoolean("done")), pos-1);
 			itemsAdapter.notifyDataSetChanged();
 			totalText.setText(calculateTotal());
-		
+		if(db.historyItemExists(data.getExtras().getString("name"))==false){
+			db.addHistory(data.getExtras().getString("name"));
+		}
 	};
 	
 	private void setUI() {

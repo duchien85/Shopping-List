@@ -2,6 +2,16 @@
 <PreferenceScreen
         xmlns:android="http://schemas.android.com/apk/res/android">
 
+		<PreferenceScreen
+                android:title="Backup and Restore"
+                android:summary=""
+				android:icon="@android:drawable/ic_menu_save">
+
+            <intent android:action="rs.pedjaapps.shoppinglist.BackupRestore"
+                     />
+
+        </PreferenceScreen>
+		
     <PreferenceCategory
             android:title="UI Options">
 

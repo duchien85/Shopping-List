@@ -38,7 +38,7 @@ public class EditItemActivity extends SherlockActivity {
 
 	private ListsAdapter itemsAdapter;
 	private ListView itemsListView;
-	private EditText title;
+	private AutoCompleteTextView title;
 	private EditText quantity;
 	private ImageView plus;
 	private ImageView minus;
@@ -74,7 +74,7 @@ public class EditItemActivity extends SherlockActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	
 		SharedPreferences sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		String theme = sharedPrefs.getString("theme", "light");
@@ -88,9 +88,12 @@ public class EditItemActivity extends SherlockActivity {
 				setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
 				
 			}
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.item_edit);
 		db = new DatabaseHandler(this);
-		title = (EditText)findViewById(R.id.item_title);
+		title = (AutoCompleteTextView)findViewById(R.id.item_title);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String> (this, android.R.layout.simple_dropdown_item_1line, db.getHistory());
+		title.setAdapter(adapter);
 		quantity = (EditText)findViewById(R.id.item_quantity);
 		plus = (ImageView)findViewById(R.id.plus);
 		minus = (ImageView)findViewById(R.id.minus);
