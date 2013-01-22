@@ -6,12 +6,14 @@ import android.graphics.Color;
 import android.os.*;
 import android.preference.*;
 import android.view.*;
+import android.view.View.OnClickListener;
 import android.widget.*;
 import android.widget.AdapterView.*;
 
 import com.actionbarsherlock.app.*;
 import com.deaux.fan.*;
 import com.google.ads.*;
+
 import java.util.*;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.ActionMode;
@@ -42,10 +44,11 @@ public class ItemsActivity extends SherlockActivity {
 	ActionMode aMode;
 	TextView totalText;
 	SharedPreferences sharedPrefs;
+	RelativeLayout container;
+	LinearLayout sideContainer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		theme = sharedPrefs.getString("theme", "light");
@@ -61,7 +64,8 @@ public class ItemsActivity extends SherlockActivity {
 				setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
 				isLight = true;
 			}
-		
+
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fan);
 		Intent intent = getIntent();
 		listName = intent.getExtras().getString("name");
@@ -76,8 +80,12 @@ public class ItemsActivity extends SherlockActivity {
 		ImageView plus = (ImageView)findViewById(R.id.action_plus);
 		plus.setImageResource(isLight ? R.drawable.add_light : R.drawable.add_dark);
 		
-		RelativeLayout container = (RelativeLayout)findViewById(R.id.container);
+		container = (RelativeLayout)findViewById(R.id.item_container);
 		container.setBackgroundResource(isLight ? R.drawable.background_holo_light : R.drawable.background_holo_dark);
+		
+		sideContainer = (LinearLayout)findViewById(R.id.side_container);
+		sideContainer.setOnClickListener(fanListener);
+		
 		
 		boolean ads = sharedPrefs.getBoolean("ads", true);
 		if (ads == true) {
@@ -139,9 +147,9 @@ public class ItemsActivity extends SherlockActivity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long arg3) {
-				System.out.println(position);
-				ItemsDatabaseEntry item = db.getItem(listName, position);
 				
+				ItemsDatabaseEntry item = db.getItem(listName, position);
+			
 				if(item.getDone()==true){
 					db.updateItem(new ItemsDatabaseEntry(item.getName(), 
 							item.getQuantity(), 
@@ -180,18 +188,31 @@ public class ItemsActivity extends SherlockActivity {
 					aMode.finish();
 				}
 				aMode = startActionMode(new ItemActionMode(position));
+				
 				return true;
 			}
 
 			
 			
 		});
+		
 		totalText = (TextView)findViewById(R.id.total);
 		totalText.setTextColor(Color.GREEN);
 		totalText.setText(calculateTotal());
 		
 	}
+	
+	private OnClickListener fanListener =
+	        new OnClickListener() {
 
+				@Override
+				public void onClick(View v) {
+					sideMenu();
+					
+				}
+	            
+	        };
+	
 	public String calculateTotal(){
 		String curency = sharedPrefs.getString("curency" ,"eur");
 		CurencyConverter converter = new CurencyConverter(this);

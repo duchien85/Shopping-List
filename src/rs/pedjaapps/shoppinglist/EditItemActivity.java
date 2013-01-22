@@ -1,28 +1,17 @@
 package rs.pedjaapps.shoppinglist;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import android.annotation.*;
 import android.app.*;
 import android.content.*;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.*;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.actionbarsherlock.app.*;
-import android.text.InputType;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.Menu;
@@ -36,8 +25,6 @@ public class EditItemActivity extends SherlockActivity {
 	FanView fan;
 	ActionBar actionBar;
 
-	private ListsAdapter itemsAdapter;
-	private ListView itemsListView;
 	private AutoCompleteTextView title;
 	private EditText quantity;
 	private ImageView plus;

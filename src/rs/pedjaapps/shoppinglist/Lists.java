@@ -1,9 +1,5 @@
 package rs.pedjaapps.shoppinglist;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,7 +14,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +26,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +34,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.deaux.fan.FanView;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 import de.devmil.common.ui.color.*;
@@ -63,7 +56,7 @@ public class Lists extends SherlockActivity {
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		
 		sharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		theme = sharedPrefs.getString("theme", "light");
@@ -79,50 +72,22 @@ public class Lists extends SherlockActivity {
 				setTheme(R.style.Theme_Sherlock_Light_DarkActionBar);
 				isLight = true;
 			}
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lists);
 		
-		//System.out.println(new CurencyConverter().convert(this, 20, "usd"));
-		//SetAlarm setAlarm = new SetAlarm(this);
-		//setAlarm.setAlarm();
+		
 		tv1 = (TextView)findViewById(R.id.tv1);
 		ll = (LinearLayout)findViewById(R.id.ll1);
 		db = new DatabaseHandler(this);
 		
 		ImageView plus = (ImageView)findViewById(R.id.action_plus);
 		
-	//	Toast.makeText(this,  ""+new Date().getTime(), Toast.LENGTH_LONG).show();
 		firstLaunch();
 		checkSync();
 		
 		
 		plus.setImageResource(isLight ? R.drawable.add_light : R.drawable.add_dark);
-		
-		/*
-		 * This method backups database to sdcard for debuging purposes
-		 * Remove it in final release
-		 * */
-	try {
-	        File sd = Environment.getExternalStorageDirectory();
-	        File data = Environment.getDataDirectory();
 
-	        if (sd.canWrite()) {
-	            String currentDBPath = "//data//rs.pedjaapps.shoppinglist//databases//ShoppingList.db";
-	            String backupDBPath = "ShoppingList.db";
-	            File currentDB = new File(data, currentDBPath);
-	            File backupDB = new File(sd, backupDBPath);
-
-	            if (currentDB.exists()) {
-	                FileChannel src = new FileInputStream(currentDB).getChannel();
-	                FileChannel dst = new FileOutputStream(backupDB).getChannel();
-	                dst.transferFrom(src, 0, src.size());
-	                src.close();
-	                dst.close();
-	                System.out.println("sdfsdfsdfdsfdsfdsfs");
-	            }
-	        }
-	    } catch (Exception e) {
-	    }
-		
 		actionBar = getSupportActionBar();
 
 		

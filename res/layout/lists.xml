@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="There are no lists" />
+        android:text="@string/no_lists1" />
 
     <LinearLayout
         android:id="@+id/ll1"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Tap" />
+            android:text="@string/tap" />
 
         <ImageView
             android:id="@+id/action_plus"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="to add new list" />
+            android:text="@string/no_lists2" />
     </LinearLayout>
 
     <ListView

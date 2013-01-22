@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
-	xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+  	android:id="@+id/item_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ItemsActivity" >
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="There are no items" />
+        android:text="@string/no_items1" />
 
     <LinearLayout
         android:id="@+id/ll1"
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="Tap" />
+            android:text="@string/tap" />
 
         <ImageView
             android:id="@+id/action_plus"
@@ -37,10 +37,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="to add new item" />
+            android:text="@string/no_items2" />
     </LinearLayout>
-	
-	<ListView
+
+    
+    <ListView
         android:id="@+id/list_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,6 +50,9 @@
         android:layout_alignParentTop="true" >
 
     </ListView>
+    
+
+    
 
     <LinearLayout
         android:id="@+id/ly3"
@@ -62,7 +66,6 @@
             android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="a150f3c94a7b13d"
-
             ads:testDevices="TEST_EMULATOR,AE41B448B31E81C499F854E7CB1519A9" />
     </LinearLayout>
 
