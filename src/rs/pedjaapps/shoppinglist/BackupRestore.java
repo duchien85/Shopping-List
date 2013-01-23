@@ -82,13 +82,13 @@ public class BackupRestore extends SherlockActivity {
 					File backupDB = new File(sd, backupPaths[i]);
 
 					copyDirectory(currentDB, backupDB);
-					Toast.makeText(this, "Backup Sucessfull", Toast.LENGTH_LONG)
+					Toast.makeText(this, getResources().getString(R.string.backup_successful), Toast.LENGTH_LONG)
 							.show();
 
 				}
 
 			} else {
-				Toast.makeText(this, "External storage not mounted",
+				Toast.makeText(this, getResources().getString(R.string.storage_error),
 						Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {
@@ -113,13 +113,13 @@ public class BackupRestore extends SherlockActivity {
 					File backupDB = new File(sd, backupPaths[i]);
 
 					copyDirectory(backupDB, currentDB);
-					Toast.makeText(this, "Restore Sucessfull",
+					Toast.makeText(this, getResources().getString(R.string.restore_successful),
 							Toast.LENGTH_LONG).show();
 
 				}
 
 			} else {
-				Toast.makeText(this, "External storage not mounted",
+				Toast.makeText(this, getResources().getString(R.string.storage_error),
 						Toast.LENGTH_LONG).show();
 			}
 		} catch (Exception e) {

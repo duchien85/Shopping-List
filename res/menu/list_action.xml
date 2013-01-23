@@ -3,12 +3,12 @@
     <item
         android:id="@+id/menu_edit"
         android:showAsAction="ifRoom|withText"
-        android:title="Edit"
+        android:title="@string/edit"
         android:icon="@drawable/edit_dark"/>
 
 	<item
         android:id="@+id/menu_delete"
         android:showAsAction="ifRoom|withText"
-        android:title="Delete"
+        android:title="@string/delete"
         android:icon="@drawable/delete_dark"/>
 </menu>

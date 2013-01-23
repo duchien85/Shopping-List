@@ -48,14 +48,14 @@
         
         <activity
             android:name="rs.pedjaapps.shoppinglist.Preferences"
-            android:label="@string/app_name"
+            android:label="@string/settings"
             android:theme="@style/Theme.Sherlock" >
             
         </activity>
         
 		<activity
             android:name="rs.pedjaapps.shoppinglist.BackupRestore"
-            android:label="Backup and Restore"
+            android:label="@string/backup_restore"
             android:theme="@style/Theme.Sherlock.Light" >
 			<intent-filter>
 				<action android:name="rs.pedjaapps.shoppinglist.BackupRestore" />

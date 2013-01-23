@@ -196,7 +196,7 @@ public class Lists extends SherlockActivity {
 			}
 			all++;
 		}
-		return done+"/"+all +" items bought";
+		return done+"/"+all +" "+getResources().getString(R.string.items_bought);
 	}
 	
 	private String getDate(){
@@ -216,16 +216,16 @@ public class Lists extends SherlockActivity {
 				isLight = false;
 			}
 
-        menu.add(1, 1, 1, "Add")
+        menu.add(1, 1, 1, getResources().getString(R.string.add))
             .setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark)
             .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        menu.add(2, 2, 2,"Clear")
+        menu.add(2, 2, 2,getResources().getString(R.string.clear))
         	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
         	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        menu.add(3, 3, 3,"Settings")
+        menu.add(3, 3, 3,getResources().getString(R.string.settings))
     	.setIcon(isLight ? R.drawable.settings_light : R.drawable.settings_dark)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		menu.add(4, 4, 4,"Update currencies")
+		menu.add(4, 4, 4,getResources().getString(R.string.update_currencies))
 			//.setIcon(isLight ? R.drawable.settings_light : R.drawable.settings_dark)
 			.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		return true;
@@ -264,8 +264,8 @@ public class Lists extends SherlockActivity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	
 		
-			builder.setTitle("Delete All Lists");
-			builder.setMessage("Are you sure?");
+			builder.setTitle(getResources().getString(R.string.delete_all_lists));
+			builder.setMessage(getResources().getString(R.string.are_you_sure));
 			builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
 		
 				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
@@ -302,8 +302,8 @@ public class Lists extends SherlockActivity {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	
 		final ListsDatabaseEntry dbList = db.getList(position);
-			builder.setTitle("Delete "+dbList.getName());
-			builder.setMessage("Are you sure?");
+			builder.setTitle(getResources().getString(R.string.delete)+" "+dbList.getName());
+			builder.setMessage(getResources().getString(R.string.are_you_sure));
 			builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
 		
 				builder.setPositiveButton(getResources().getString(android.R.string.yes), new DialogInterface.OnClickListener() {
@@ -359,7 +359,7 @@ private void addListDialog(){
 					}
 					
 				}, Color.YELLOW);
-				dialog.setTitle("Pick Color");
+				dialog.setTitle(getResources().getString(R.string.pick_color));
 				dialog.show();
 			}
 
@@ -367,8 +367,8 @@ private void addListDialog(){
 			
 		});
 		
-		builder.setTitle("Add List");
-		builder.setMessage("Enter List Name");
+		builder.setTitle(getResources().getString(R.string.add_list));
+		builder.setMessage(getResources().getString(R.string.enter_list_name));
 		builder.setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark);
 
 
@@ -380,10 +380,10 @@ private void addListDialog(){
 				String inputText = input.getText().toString();
 
 				if(inputText.length()==0){
-					Toast.makeText(Lists.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+					Toast.makeText(Lists.this, getResources().getString(R.string.list_empty), Toast.LENGTH_LONG).show();
 				}
 				else if(db.listExists(inputText)){
-					Toast.makeText(Lists.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
+					Toast.makeText(Lists.this, getResources().getString(R.string.list_exists), Toast.LENGTH_LONG).show();
 				}
 				
 				else{
@@ -439,7 +439,7 @@ private void editListDialog(final int position){
 					}
 					
 				}, Color.YELLOW);
-				dialog.setTitle("Pick Color");
+				dialog.setTitle(getResources().getString(R.string.pick_color));
 				dialog.show();
 			}
 
@@ -447,8 +447,8 @@ private void editListDialog(final int position){
 			
 		});
 		
-		builder.setTitle("Edit List");
-		builder.setMessage("Edit List Details");
+		builder.setTitle(getResources().getString(R.string.edit_list));
+		builder.setMessage(getResources().getString(R.string.edit_list_details));
 		builder.setIcon(isLight ? R.drawable.edit_light : R.drawable.edit_dark);
 		
 
@@ -460,7 +460,7 @@ private void editListDialog(final int position){
 				String inputText = input.getText().toString();
 
 				if(inputText.length()==0){
-					Toast.makeText(Lists.this, "List name cannot be empty!", Toast.LENGTH_LONG).show();
+					Toast.makeText(Lists.this, getResources().getString(R.string.list_empty), Toast.LENGTH_LONG).show();
 				}
 				/*else if(db.listExists(inputText)){
 					Toast.makeText(Lists.this, "List already exists.\nSelect diferent name!", Toast.LENGTH_LONG).show();
@@ -512,10 +512,10 @@ private final class ListActionMode implements ActionMode.Callback {
 			else if(theme.equals("light_dark_action_bar")){
 				isLight = false;
 			}
-		menu.add(1, 1, 1, "Edit")
+		menu.add(1, 1, 1, getResources().getString(R.string.edit))
         .setIcon(isLight ? R.drawable.edit_light : R.drawable.edit_dark)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		menu.add(2, 2, 2,"Delete")
+		menu.add(2, 2, 2,getResources().getString(R.string.delete))
     	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     

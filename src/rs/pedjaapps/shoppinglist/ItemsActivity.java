@@ -160,7 +160,6 @@ public class ItemsActivity extends SherlockActivity {
 							item.getQuantity(), 
 							item.getValue(), item.getImage(), item.getUnit(), item.getCurency(), false), position-1);
 					itemsAdapter.notifyDataSetChanged();
-					System.out.println(item.getDone());
 				}
 				else{
 					db.updateItem(new ItemsDatabaseEntry(item.getName(), 
@@ -172,7 +171,6 @@ public class ItemsActivity extends SherlockActivity {
 							item.getQuantity(), 
 							item.getValue(), item.getImage(), item.getUnit(), item.getCurency(), true), position-1);
 					itemsAdapter.notifyDataSetChanged();
-					System.out.println(item.getDone());
 				}
 				totalText.setText(calculateTotal());
 			}
@@ -284,10 +282,10 @@ public class ItemsActivity extends SherlockActivity {
 			else if(theme.equals("light_dark_action_bar")){
 				isLight = false;
 			}
-		menu.add(1, 1, 1, "Add")
+		menu.add(1, 1, 1, getResources().getString(R.string.add))
         .setIcon(isLight ? R.drawable.add_light : R.drawable.add_dark)
         .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		menu.add(2, 2, 2,"Clear")
+		menu.add(2, 2, 2,getResources().getString(R.string.clear))
     	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
     	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     
@@ -330,8 +328,6 @@ public class ItemsActivity extends SherlockActivity {
 			}
 			else if (requestCode ==EDIT_ITEM ) {
 				editItem(data);
-
-				System.out.println("edit");
 			}
 		}
 
@@ -404,8 +400,8 @@ public class ItemsActivity extends SherlockActivity {
 	private void deleteAllDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-		builder.setTitle("Delete All Itemss");
-		builder.setMessage("Are you sure?");
+		builder.setTitle(getResources().getString(R.string.delete_all_items));
+		builder.setMessage(getResources().getString(R.string.are_you_sure));
 		builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
 
 		builder.setPositiveButton(getResources()
@@ -457,10 +453,10 @@ public class ItemsActivity extends SherlockActivity {
 				else if(theme.equals("light_dark_action_bar")){
 					isLight = false;
 				}
-			menu.add(1, 1, 1, "Edit")
+			menu.add(1, 1, 1, getResources().getString(R.string.edit))
 	        .setIcon(isLight ? R.drawable.edit_light : R.drawable.edit_dark)
 	        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-			menu.add(2, 2, 2,"Delete")
+			menu.add(2, 2, 2,getResources().getString(R.string.delete))
 	    	.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark)
 	    	.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 	    
@@ -493,7 +489,7 @@ public class ItemsActivity extends SherlockActivity {
 				pos = id;
 	    	}
 	    	if(item.getItemId()==2){
-	    		//deleteListDialog(id);
+	    		deleteItemDialog(id);
 	    	}
 	    	mode.finish();
 	        return true;
@@ -502,6 +498,44 @@ public class ItemsActivity extends SherlockActivity {
 	    @Override
 	    public void onDestroyActionMode(ActionMode mode) {
 	    }
+	}
+	
+	private void deleteItemDialog(final int id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+		builder.setTitle(getResources().getString(R.string.delete_item));
+		builder.setMessage(getResources().getString(R.string.are_you_sure));
+		builder.setIcon(isLight ? R.drawable.delete_light : R.drawable.delete_dark);
+
+		builder.setPositiveButton(getResources()
+				.getString(android.R.string.yes),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						ItemsDatabaseEntry entry = db
+								.getItem(listName, id);
+						
+							db.deleteItem(entry, listName);
+						
+						itemsAdapter.remove(itemsAdapter.getItem(id-1));
+						itemsAdapter.notifyDataSetChanged();
+						setUI();
+						totalText.setText(calculateTotal());
+					}
+				});
+
+		builder.setNegativeButton(
+				getResources().getString(android.R.string.no),
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+
+		AlertDialog alert = builder.create();
+
+		alert.show();
 	}
 	
 }

@@ -70,4 +70,18 @@
         <item>86400000</item>  
     </string-array>
     
+    <string-array name="units">
+		<item>pieces</item>
+        <item>kg</item>
+        <item>lit</item>  
+		<item>gr</item>
+        <item>cm</item>
+        <item>package</item>  
+        <item>inch</item>
+        <item>foot</item>
+        <item>bootle</item>  
+		<item>box</item>
+        <item>unit</item>
+        <item>pair</item>  
+    </string-array>
 </resources>

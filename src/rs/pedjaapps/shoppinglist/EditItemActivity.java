@@ -95,7 +95,7 @@ public class EditItemActivity extends SherlockActivity {
 		listName = intent.getExtras().getString("listName");
 		System.out.println(listName+itemName);
 		if(itemName.length()!=0){
-			actionBar.setTitle("Edit - "+itemName);
+			actionBar.setTitle(getResources().getString(R.string.edit_item)+" "+itemName);
 			isEdit = true;
 			title.setText(intent.getExtras().getString("itemName"));
 			quantity.setText(String.valueOf(intent.getExtras().getDouble("quantity")));
@@ -108,7 +108,7 @@ public class EditItemActivity extends SherlockActivity {
 			
 		}
 		else{
-			actionBar.setTitle("Add New List");
+			actionBar.setTitle(getResources().getString(R.string.add_item));
 			isEdit = false;
 		}
 		plus.setOnClickListener(new OnClickListener(){
@@ -177,7 +177,7 @@ public class EditItemActivity extends SherlockActivity {
 			
 		});
 		
-		String[] units = {"pieces", "kg", "lit", "gr", "cm", "package", "inch", "foot", "bottle", "box", "unit", "pair"};
+		String[] units = getResources().getStringArray(R.array.units);
 		String[] curencies = {"DIN","EUR", "GBP", "HRK", "HUF", "JPY", "KWD", "NOK", "SEK", "USD", "DKK", "CZK", "CHF", "CAD", "BAM", "AUD"};
 		
 		ArrayAdapter<String> unitAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, units);
@@ -270,24 +270,24 @@ public class EditItemActivity extends SherlockActivity {
 		if (item.getItemId() == R.id.menu_save)
 		{
 			if(title.getText().toString().length()==0){
-				Toast.makeText(this, "Item name cannot be empty!", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.item_empty), Toast.LENGTH_LONG).show();
 			}
-			/*else if(db.itemExists(listName, title.getText().toString())){
-				Toast.makeText(this, "Item already exists.\nTry differente name!", Toast.LENGTH_LONG).show();
-			}*/
+			else if(itemName.length()==0 && db.itemExists(listName, title.getText().toString())){
+				Toast.makeText(this, getResources().getString(R.string.item_exists), Toast.LENGTH_LONG).show();
+			}
 			
 			else if(quantity.getText().toString().length()==0){
-				Toast.makeText(this, "Quantity cannot be empty!", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.quantity_empty), Toast.LENGTH_LONG).show();
 			}
 			else if(Double.parseDouble(quantity.getText().toString())==0){
-				Toast.makeText(this, "Quantity cannot be 0", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.quantity_zero), Toast.LENGTH_LONG).show();
 			}
 			
 			else if(price.getText().toString().length()==0){
-				Toast.makeText(this, "Price cannot be empty!", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.price_empty), Toast.LENGTH_LONG).show();
 			}
 			else if(Double.parseDouble(price.getText().toString())==0){
-				Toast.makeText(this, "Price cannot be 0", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, getResources().getString(R.string.price_zero), Toast.LENGTH_LONG).show();
 			}
 			else{
 				
@@ -302,7 +302,6 @@ public class EditItemActivity extends SherlockActivity {
 		    intent.putExtra("done", done);
 			setResult(RESULT_OK, intent);
 			finish();
-				
 			}
 		}	
 		if (item.getItemId() == R.id.menu_cancel)
@@ -321,9 +320,9 @@ public class EditItemActivity extends SherlockActivity {
 	
 	private void imagePickDialog(){
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Select Image Source");
+		builder.setTitle(getResources().getString(R.string.select_image));
 		builder.setIcon(android.R.drawable.ic_menu_camera);
-		builder.setNeutralButton("Select From Galery", new DialogInterface.OnClickListener(){
+		builder.setNeutralButton(getResources().getString(R.string.select_image_galery), new DialogInterface.OnClickListener(){
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -332,7 +331,7 @@ public class EditItemActivity extends SherlockActivity {
 			}
 			
 		});
-		builder.setPositiveButton("Take image with Camera", new DialogInterface.OnClickListener(){
+		builder.setPositiveButton(getResources().getString(R.string.take_image_camera), new DialogInterface.OnClickListener(){
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Intent photoPickerIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE); 	

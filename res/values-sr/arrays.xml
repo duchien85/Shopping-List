@@ -2,7 +2,7 @@
 <resources>
     <string-array name="theme_entry">
         <item>Svetla Tema</item>
-        <item>Light Theme with dark action bar</item>
+        <item>Svetla Tema sa tamnim Action barom</item>
         <item>Tamna Tema</item>  
     </string-array>
 
@@ -70,4 +70,18 @@
         <item>86400000</item>  
     </string-array>
 	
+    <string-array name="units">
+		<item>komada</item>
+        <item>kg</item>
+        <item>litara</item>  
+		<item>gr</item>
+        <item>cm</item>
+        <item>paketa</item>  
+        <item>inča</item>
+        <item>stopa</item>
+        <item>flaša</item>  
+		<item>kutija</item>
+        <item>jedinica</item>
+        <item>para</item>  
+    </string-array>
 </resources>
