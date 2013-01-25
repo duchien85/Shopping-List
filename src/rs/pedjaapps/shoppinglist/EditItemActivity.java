@@ -1,28 +1,33 @@
 package rs.pedjaapps.shoppinglist;
 
-import android.app.*;
-import android.content.*;
+import android.widget.*;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-
-import com.actionbarsherlock.app.*;
-
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.deaux.fan.FanView;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class EditItemActivity extends SherlockActivity {
 
 	
 	private DatabaseHandler db;
-	FanView fan;
+	
 	ActionBar actionBar;
 
 	private AutoCompleteTextView title;
@@ -38,6 +43,7 @@ public class EditItemActivity extends SherlockActivity {
 	private boolean mAutoDecrement = false;
 	private int REP_DELAY = 50;
 	private static final int SELECT_PHOTO = 100;
+	private static final int SCAN = 101;
 	private String imageUri;
 	private String unitValue;
 	private String curencyValue;
@@ -46,6 +52,7 @@ public class EditItemActivity extends SherlockActivity {
 	boolean isEdit;
 	ImageView img;
 	boolean done;
+	Button scan;
 	
 	class RptUpdater implements Runnable {
 	    public void run() {
@@ -230,6 +237,22 @@ public class EditItemActivity extends SherlockActivity {
         	    }
         	});
 		
+		scan = (Button)findViewById(R.id.scan);
+		scan.setOnClickListener(new OnClickListener(){
+
+				public void onClick(View p1)
+				{
+				/*	Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+					intent.setPackage("com.google.zxing.client.android");
+					intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
+					startActivityForResult(intent, SCAN);*/
+					IntentIntegrator integrator = new IntentIntegrator(EditItemActivity.this);
+					integrator.initiateScan(IntentIntegrator.PRODUCT_CODE_TYPES);
+				}
+				
+			
+		});
+		
 	}
 
 	public void decrement(){
@@ -345,17 +368,31 @@ public class EditItemActivity extends SherlockActivity {
 	}
 	
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
-	    super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
-
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) { 
+	    super.onActivityResult(requestCode, resultCode, intent); 
+		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		if (scanResult != null) {
+			// handle scan result
+			String contents = intent.getStringExtra("SCAN_RESULT");
+			String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+			title.setText(contents+" "+format);
+		}
 	    switch(requestCode) { 
 	    case SELECT_PHOTO:
 	        if(resultCode == RESULT_OK){  
-	        	Uri uri = imageReturnedIntent.getData();
+	        	Uri uri = intent.getData();
 	        	imageUri = uri.toString();
 	        	
 	        	img.setImageURI(uri);
 	        }
+			break;
+		/*case SCAN:
+		    if(resultCode==RESULT_OK){
+				String contents = intent.getStringExtra("SCAN_RESULT");
+				String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+				title.setText(contents+format);
+			}
+		    break;*/
 	    }
 	}
 	

@@ -11,7 +11,6 @@ import android.widget.*;
 import android.widget.AdapterView.*;
 
 import com.actionbarsherlock.app.*;
-import com.deaux.fan.*;
 import com.google.ads.*;
 
 import java.util.*;
@@ -19,11 +18,12 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.slidingmenu.lib.SlidingMenu;
 
 public class ItemsActivity extends SherlockActivity {
 
 	private DatabaseHandler db;
-	FanView fan;
+//	FanView fan;
 	ActionBar actionBar;
 	private ListsAdapter sideAdapter;
 	private ListView sideListView;
@@ -46,7 +46,7 @@ public class ItemsActivity extends SherlockActivity {
 	SharedPreferences sharedPrefs;
 	RelativeLayout container;
 	LinearLayout sideContainer;
-
+	SlidingMenu	menu;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		sharedPrefs = PreferenceManager
@@ -66,13 +66,23 @@ public class ItemsActivity extends SherlockActivity {
 			}
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.fan);
+		setContentView(R.layout.activity_list);
 		Intent intent = getIntent();
 		listName = intent.getExtras().getString("name");
 
 		db = new DatabaseHandler(this);
-		fan = (FanView) findViewById(R.id.fan_view);
-		fan.setViews(R.layout.activity_list, R.layout.side_list);
+		//fan = (FanView) findViewById(R.id.fan_view);
+		//fan.setViews(R.layout.activity_list, R.layout.side_list);
+		
+		menu = new SlidingMenu(this);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
+		menu.setMenu(R.layout.side_list);
+		
 		actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setTitle(listName);
@@ -96,7 +106,7 @@ public class ItemsActivity extends SherlockActivity {
 		tv1 = (TextView) findViewById(R.id.tv1);
 		ll = (LinearLayout) findViewById(R.id.ll1);
 
-		sideListView = (ListView) findViewById(R.id.list);
+		sideListView = (ListView) menu.findViewById(R.id.list);
 		sideAdapter = new ListsAdapter(this, R.layout.side_lists_row);
 
 		sideListView.setAdapter(sideAdapter);
@@ -114,7 +124,7 @@ public class ItemsActivity extends SherlockActivity {
 				ListsDatabaseEntry list = db.getList(position + 1);
 				listName = list.getName();
 				actionBar.setTitle(listName);
-				sideMenu();
+				menu.showContent();
 				itemsAdapter.clear();
 				for (final ItemsEntry entry : getItemsEntries()) {
 					itemsAdapter.add(entry);
@@ -205,7 +215,7 @@ public class ItemsActivity extends SherlockActivity {
 
 				@Override
 				public void onClick(View v) {
-					sideMenu();
+					menu.showContent();
 					
 				}
 	            
@@ -253,9 +263,7 @@ public class ItemsActivity extends SherlockActivity {
 		return entries;
 	}
 
-	private void sideMenu() {
-		fan.showMenu();
-	}
+	
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -309,7 +317,7 @@ public class ItemsActivity extends SherlockActivity {
 
 		}
 		if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
-			fan.showMenu();
+			menu.showContent();
 			return true;
 		}
 
