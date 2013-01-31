@@ -20,9 +20,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
 public class EditItemActivity extends SherlockActivity {
 
 	
@@ -43,7 +40,7 @@ public class EditItemActivity extends SherlockActivity {
 	private boolean mAutoDecrement = false;
 	private int REP_DELAY = 50;
 	private static final int SELECT_PHOTO = 100;
-	private static final int SCAN = 101;
+	//private static final int SCAN = 101;
 	private String imageUri;
 	private String unitValue;
 	private String curencyValue;
@@ -237,21 +234,18 @@ public class EditItemActivity extends SherlockActivity {
         	    }
         	});
 		
-		scan = (Button)findViewById(R.id.scan);
+		/*scan = (Button)findViewById(R.id.scan);
 		scan.setOnClickListener(new OnClickListener(){
 
 				public void onClick(View p1)
 				{
-				/*	Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-					intent.setPackage("com.google.zxing.client.android");
-					intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
-					startActivityForResult(intent, SCAN);*/
+				
 					IntentIntegrator integrator = new IntentIntegrator(EditItemActivity.this);
 					integrator.initiateScan(IntentIntegrator.PRODUCT_CODE_TYPES);
 				}
 				
 			
-		});
+		});*/
 		
 	}
 
@@ -370,13 +364,13 @@ public class EditItemActivity extends SherlockActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) { 
 	    super.onActivityResult(requestCode, resultCode, intent); 
-		IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+		/*IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 		if (scanResult != null) {
 			// handle scan result
 			String contents = intent.getStringExtra("SCAN_RESULT");
 			String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 			title.setText(contents+" "+format);
-		}
+		}*/
 	    switch(requestCode) { 
 	    case SELECT_PHOTO:
 	        if(resultCode == RESULT_OK){  
